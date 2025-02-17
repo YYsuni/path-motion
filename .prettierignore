@@ -1,0 +1,12 @@
+dist/
+node_modules/
+public/
+.next/
+
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+**/package-lock.json
+**/pnpm-lock.json
+
