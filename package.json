@@ -9,9 +9,12 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"motion": "^12.4.4",
 		"next": "15.1.7",
 		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
+		"react-dom": "^19.0.0",
+		"svg-path-commander": "^2.1.10",
+		"uid": "^2.0.2"
 	},
 	"devDependencies": {
 		"@types/node": "^20",
