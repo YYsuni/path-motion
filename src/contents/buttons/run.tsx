@@ -16,7 +16,7 @@ function Run({ pointsStore }: Props) {
 	const ref = useRef<HTMLDivElement>(null)
 
 	return (
-		<section>
+		<>
 			<div
 				ref={ref}
 				className='absolute bottom-2 left-0 top-0 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-black bg-white'></div>
@@ -39,10 +39,10 @@ function Run({ pointsStore }: Props) {
 						duration: pathLength / speed
 					})
 				}}
-				className='fixed bottom-8 right-12 w-[120px] rounded-md border-[1.5px] border-black bg-white py-1'>
+				className='w-[120px] rounded-md border-[1.5px] border-black bg-white py-1'>
 				Run
 			</button>
-		</section>
+		</>
 	)
 }
 
