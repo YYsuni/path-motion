@@ -8,6 +8,7 @@ import { Point } from '@/lib/point'
 import { pointsToPath } from '@/lib/utils'
 import { useCallback, useEffect, useState } from 'react'
 import Clear from '@/contents/buttons/clear'
+import PointControls from '@/contents/point-controls'
 
 const store = {
 	points: [] as Point[]
@@ -18,21 +19,23 @@ export default function Home() {
 	useEffect(() => {
 		setInit(true)
 
-		const keypressHandler = (e: KeyboardEvent) => {
-			if (e.key === 'Delete' || e.keyCode === 46) {
-				alert('Del')
-			}
-		}
-		document.addEventListener('keypress', keypressHandler)
+		// const keypressHandler = (e: KeyboardEvent) => {
+		// 	if (e.key === 'Delete') {
+		// 	}
+		// }
+		// window.addEventListener('keypress', keypressHandler)
 
-		return () => {
-			document.removeEventListener('keypress', keypressHandler)
-		}
+		// return () => {
+		// 	window.removeEventListener('keypress', keypressHandler)
+		// }
 	}, [])
 
 	const [points, setPoints] = useState<Point[]>([])
 	store.points = points
+
 	const clear = useCallback(() => setPoints([]), [])
+
+	const activePoint = points.find(item => item.active)
 
 	const d = pointsToPath(points)
 
@@ -65,6 +68,8 @@ export default function Home() {
 				<Clear clear={clear} />
 				<Run pointsStore={store} />
 			</Buttons>
+
+			<PointControls activePoint={activePoint} />
 		</div>
 	)
 }

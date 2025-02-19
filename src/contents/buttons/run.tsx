@@ -19,7 +19,7 @@ function Run({ pointsStore }: Props) {
 		<>
 			<div
 				ref={ref}
-				className='absolute bottom-2 left-0 top-0 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-black bg-white'></div>
+				className='fixed bottom-2 left-0 top-0 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-black bg-white'></div>
 
 			<button
 				onClick={() => {
@@ -36,7 +36,10 @@ function Run({ pointsStore }: Props) {
 							ref.current!.style.left = currentX + 'px'
 							ref.current!.style.top = currentY + 'px'
 						},
-						duration: pathLength / speed
+						duration: pathLength / speed,
+						onComplete() {
+							ref.current!.style.display = 'none'
+						}
 					})
 				}}
 				className='w-[120px] rounded-md border-[1.5px] border-black bg-white py-1'>

@@ -9,10 +9,10 @@ export function pointsToPath(points: Point[]): string {
 
 	const firstPoint = copyOfPoints.shift()!
 
-	d += `M ${firstPoint.x} ${firstPoint.y}`
+	d += `M${firstPoint.x} ${firstPoint.y} `
 
 	for (let point of copyOfPoints) {
-		d += `L ${point.x} ${point.y}`
+		d += `L${point.x} ${point.y} `
 	}
 
 	return d
