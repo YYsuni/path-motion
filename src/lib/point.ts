@@ -12,13 +12,21 @@ export class Point {
 	postControlPoint = { x: 0, y: 0 }
 	enablePreControl = false
 	enablePostControl = false
+	enableControlEqual = false
 
-	constructor({ x, y, setPoints }: { x: number; y: number; setPoints: Dispatch<SetStateAction<Point[]>> }) {
+	static ControlLength = 40
+
+	pointsStore = {
+		points: [] as Point[]
+	}
+
+	constructor({ x, y, setPoints, pointsStore }: { x: number; y: number; setPoints: Dispatch<SetStateAction<Point[]>>; pointsStore: any }) {
 		this.uid = uid()
 
 		this.x = x
 		this.y = y
 		this.setPoints = setPoints
+		this.pointsStore = pointsStore
 	}
 
 	activate() {
@@ -27,5 +35,80 @@ export class Point {
 			this.active = true
 			return [...state]
 		})
+	}
+
+	getIndex() {
+		return this.pointsStore.points.findIndex(item => item.uid == this.uid)
+	}
+
+	getPrePoint() {
+		const index = this.getIndex()
+		if (index > 0) return this.pointsStore.points[index - 1]
+	}
+	getPostPoint() {
+		const index = this.getIndex()
+		if (index < this.pointsStore.points.length - 1) return this.pointsStore.points[index + 1]
+	}
+	initPreControlPoint() {
+		const prePoint = this.getPrePoint()
+		if (prePoint) {
+			const xDiff = prePoint.x - this.x
+			const yDiff = prePoint.y - this.y
+			const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+
+			const controlLength = Math.min(Point.ControlLength, distance - 10)
+			const ratio = controlLength / distance
+
+			this.preControlPoint.x = xDiff * ratio + this.x
+			this.preControlPoint.y = yDiff * ratio + this.y
+		}
+	}
+	initPostControlPoint() {
+		const postPoint = this.getPostPoint()
+		if (postPoint) {
+			const xDiff = postPoint.x - this.x
+			const yDiff = postPoint.y - this.y
+			const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+
+			const controlLength = Math.min(Point.ControlLength, distance - 10)
+			const ratio = controlLength / distance
+
+			this.postControlPoint.x = xDiff * ratio + this.x
+			this.postControlPoint.y = yDiff * ratio + this.y
+		}
+	}
+	getPreControlLength() {
+		const xDiff = this.preControlPoint.x - this.x
+		const yDiff = this.preControlPoint.y - this.y
+		return Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+	}
+	getPostControlLength() {
+		const xDiff = this.postControlPoint.x - this.x
+		const yDiff = this.postControlPoint.y - this.y
+		return Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+	}
+	syncPreControlPoint() {
+		const preControlLength = this.getPreControlLength()
+		const postControlLength = this.getPostControlLength()
+
+		const ratio = preControlLength / postControlLength
+
+		const xDiff = this.postControlPoint.x - this.x
+		const yDiff = this.postControlPoint.y - this.y
+
+		this.preControlPoint.x = -xDiff * ratio + this.x
+		this.preControlPoint.y = -yDiff * ratio + this.y
+	}
+	syncPostControlPoint() {
+		const preControlLength = this.getPreControlLength()
+		const postControlLength = this.getPostControlLength()
+
+		const ratio = postControlLength / preControlLength
+
+		const xDiff = this.preControlPoint.x - this.x
+		const yDiff = this.preControlPoint.y - this.y
+
+		this.postControlPoint.x = -xDiff * ratio + this.x
+		this.postControlPoint.y = -yDiff * ratio + this.y
 	}
 }

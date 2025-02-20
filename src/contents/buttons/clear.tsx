@@ -6,7 +6,7 @@ interface Props {
 
 function Clear({ clear }: Props) {
 	return (
-		<button onClick={() => clear()} className='rounded-md border-[1.5px] border-black bg-white px-3 py-1'>
+		<button onClick={() => clear()} className='rounded-md bg-white px-3 py-1 shadow'>
 			Clear
 		</button>
 	)

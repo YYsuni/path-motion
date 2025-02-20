@@ -9,12 +9,15 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@svgr/webpack": "^8.1.0",
+		"clsx": "^2.1.1",
 		"motion": "^12.4.4",
 		"next": "15.1.7",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react18-json-view": "^0.2.9",
 		"svg-path-commander": "^2.1.10",
+		"ts-debounce": "^4.0.0",
 		"uid": "^2.0.2"
 	},
 	"devDependencies": {

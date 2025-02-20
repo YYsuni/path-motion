@@ -8,7 +8,7 @@ import { Point } from '@/lib/point'
 import { pointsToPath } from '@/lib/utils'
 import { useCallback, useEffect, useState } from 'react'
 import Clear from '@/contents/buttons/clear'
-import PointControls from '@/contents/point-controls'
+import PointControls from '@/components/point-controls'
 
 const store = {
 	points: [] as Point[]
@@ -44,7 +44,7 @@ export default function Home() {
 			{init && (
 				<svg
 					onClick={e => {
-						const point = new Point({ x: e.pageX, y: e.pageY, setPoints })
+						const point = new Point({ x: e.pageX, y: e.pageY, setPoints, pointsStore: store })
 						setPoints(state => {
 							state.forEach(item => (item.active = false))
 							return [...state, point]
@@ -57,7 +57,7 @@ export default function Home() {
 					<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
 
 					{points.map((item, index) => (
-						<PointComponent key={item.uid} point={item} index={index} />
+						<PointComponent key={item.uid} point={item} />
 					))}
 				</svg>
 			)}

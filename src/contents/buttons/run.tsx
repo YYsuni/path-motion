@@ -42,7 +42,7 @@ function Run({ pointsStore }: Props) {
 						}
 					})
 				}}
-				className='w-[120px] rounded-md border-[1.5px] border-black bg-white py-1'>
+				className='w-[120px] rounded-md border-[1.5px] bg-gray-800 py-1 text-white'>
 				Run
 			</button>
 		</>

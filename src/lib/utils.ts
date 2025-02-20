@@ -3,16 +3,25 @@ import { Point } from './point'
 export function pointsToPath(points: Point[]): string {
 	if (points.length == 0) return ''
 
-	const copyOfPoints = points.slice()
-
 	let d = ''
 
-	const firstPoint = copyOfPoints.shift()!
+	d += `M${points[0].x} ${points[0].y} `
 
-	d += `M${firstPoint.x} ${firstPoint.y} `
+	for (let i = 1; i < points.length; i++) {
+		const prePoint = points[i - 1]
+		const point = points[i]
 
-	for (let point of copyOfPoints) {
-		d += `L${point.x} ${point.y} `
+		if (prePoint.enablePostControl || point.enablePreControl) {
+			if (prePoint.enablePostControl) d += `C${prePoint.postControlPoint.x} ${prePoint.postControlPoint.y} `
+			else d += `C${prePoint.x} ${prePoint.y} `
+
+			if (point.enablePreControl) d += `${point.preControlPoint.x} ${point.preControlPoint.y} `
+			else d += `${point.x} ${point.y} `
+
+			d += `${point.x} ${point.y} `
+		} else {
+			d += `L${points[i].x} ${points[i].y} `
+		}
 	}
 
 	return d
