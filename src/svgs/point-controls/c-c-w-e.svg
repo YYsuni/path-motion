@@ -1,0 +1,9 @@
+<svg viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M61 170C61 170 61 44 121 44C181 44 181 170 181 170" stroke="currentColor" stroke-width="15"/>
+<circle cx="60" cy="182" r="19" fill="white" stroke="currentColor" stroke-width="10"/>
+<path d="M202 182C202 192.493 193.493 201 183 201C172.507 201 164 192.493 164 182C164 171.507 172.507 163 183 163C193.493 163 202 171.507 202 182Z" fill="white" stroke="currentColor" stroke-width="10"/>
+<path d="M60 41L120 41L180 41" stroke="currentColor" stroke-width="10"/>
+<circle cx="60" cy="41" r="19" fill="white" stroke="currentColor" stroke-width="10"/>
+<path d="M202 41C202 51.4934 193.493 60 183 60C172.507 60 164 51.4934 164 41C164 30.5066 172.507 22 183 22C193.493 22 202 30.5066 202 41Z" fill="white" stroke="currentColor" stroke-width="10"/>
+<path d="M114.5 187.5C114.5 190.261 116.739 192.5 119.5 192.5C122.261 192.5 124.5 190.261 124.5 187.5H114.5ZM114.5 44V187.5H124.5V44H114.5Z" fill="currentColor"/>
+</svg>

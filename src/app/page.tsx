@@ -59,6 +59,7 @@ export default function Home() {
 			if (creatingPoint) {
 				creatingPoint.enablePreControl = true
 				creatingPoint.enablePostControl = true
+				creatingPoint.enableControlWeld = true
 				creatingPoint.enableControlEqual = true
 				creatingPoint.postControlPoint.x = e.x
 				creatingPoint.postControlPoint.y = e.y

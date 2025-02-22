@@ -22,6 +22,7 @@ function Run({ pointsStore }: Props) {
 				className='fixed bottom-2 left-0 top-0 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-black bg-white'></div>
 
 			<button
+				onMouseDown={e => e.stopPropagation()}
 				onClick={() => {
 					currentAnimation?.stop()
 

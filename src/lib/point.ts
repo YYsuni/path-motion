@@ -12,6 +12,7 @@ export class Point {
 	postControlPoint = { x: 0, y: 0 }
 	enablePreControl = false
 	enablePostControl = false
+	enableControlWeld = false
 	enableControlEqual = false
 
 	static ControlLength = 40
@@ -102,7 +103,7 @@ export class Point {
 		const postControlLength = this.getPostControlLength()
 		if (!postControlLength) return
 
-		const ratio = preControlLength / postControlLength
+		const ratio = this.enableControlEqual ? 1 : preControlLength / postControlLength
 
 		const xDiff = this.postControlPoint.x - this.x
 		const yDiff = this.postControlPoint.y - this.y
@@ -115,7 +116,7 @@ export class Point {
 		const postControlLength = this.getPostControlLength()
 		if (!preControlLength) return
 
-		const ratio = postControlLength / preControlLength
+		const ratio = this.enableControlEqual ? 1 : postControlLength / preControlLength
 
 		const xDiff = this.preControlPoint.x - this.x
 		const yDiff = this.preControlPoint.y - this.y

@@ -7,6 +7,13 @@ interface Props {
 	point: Point
 }
 
+const store = {
+	preControlStartOffetX: 0,
+	preControlStartOffetY: 0,
+	postControlStartOffetX: 0,
+	postControlStartOffetY: 0
+}
+
 export default function PointComponent({ point }: Props) {
 	const [active, setActive] = useState(false)
 	const theActive = active || point.active
@@ -22,7 +29,7 @@ export default function PointComponent({ point }: Props) {
 							e.stopPropagation()
 							point.preControlPoint.x = e.pageX
 							point.preControlPoint.y = e.pageY
-							if (point.enablePostControl && point.enableControlEqual) {
+							if (point.enablePostControl && point.enableControlWeld) {
 								point.syncPostControlPoint()
 							}
 							point.activate()
@@ -48,7 +55,7 @@ export default function PointComponent({ point }: Props) {
 						onPan={e => {
 							point.postControlPoint.x = e.pageX
 							point.postControlPoint.y = e.pageY
-							if (point.enablePreControl && point.enableControlEqual) {
+							if (point.enablePreControl && point.enableControlWeld) {
 								point.syncPreControlPoint()
 							}
 
@@ -69,13 +76,25 @@ export default function PointComponent({ point }: Props) {
 			)}
 
 			<motion.circle
-				onMouseDown={e => e.stopPropagation()}
+				onMouseDown={e => {
+					e.stopPropagation()
+					store.preControlStartOffetX = point.preControlPoint.x - point.x
+					store.preControlStartOffetY = point.preControlPoint.y - point.y
+					store.postControlStartOffetX = point.postControlPoint.x - point.x
+					store.postControlStartOffetY = point.postControlPoint.y - point.y
+
+					console.log('store', store)
+				}}
 				onMouseEnter={() => setActive(true)}
 				onMouseOut={() => setActive(false)}
 				onPan={e => {
 					e.stopPropagation()
 					point.x = e.pageX
 					point.y = e.pageY
+					point.preControlPoint.x = store.preControlStartOffetX + point.x
+					point.preControlPoint.y = store.preControlStartOffetY + point.y
+					point.postControlPoint.x = store.postControlStartOffetX + point.x
+					point.postControlPoint.y = store.postControlStartOffetY + point.y
 					point.activate()
 				}}
 				onClick={e => {
