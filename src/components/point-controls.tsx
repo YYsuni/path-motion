@@ -8,6 +8,8 @@ import CCESVG from '@/svgs/point-controls/c-c-e.svg'
 import { useEffect, useState } from 'react'
 import { addEventListener } from '@/lib/window-event'
 import clsx from 'clsx'
+import DeleteSVG from '@/svgs/delete.svg'
+import CloseSVG from '@/svgs/close.svg'
 
 interface Props {
 	activePoint?: Point
@@ -25,7 +27,7 @@ export default function PointControls({ activePoint }: Props) {
 	if (activePoint)
 		return (
 			<motion.div animate={{ left: activePoint.x, top: activePoint.y }} className={clsx('fixed', !theActive && 'pointer-events-none opacity-0')}>
-				<div className='relative top-4 flex -translate-x-1/2 items-center gap-1 rounded-lg bg-white p-2 shadow-md'>
+				<div className='relative top-6 flex -translate-x-1/2 items-center gap-1 rounded-lg bg-white p-2 shadow-md'>
 					<button
 						onClick={() => {
 							activePoint.enablePreControl = false
@@ -100,9 +102,20 @@ export default function PointControls({ activePoint }: Props) {
 					<button
 						onClick={() => {
 							setActive(false)
+							activePoint.deleteSelf()
 						}}
-						className='h-7 w-7 rounded hover:bg-gray-200 active:bg-gray-300 active:shadow-inner'>
-						x
+						className='rounded hover:bg-gray-200 active:bg-gray-300 active:shadow-inner'>
+						<DeleteSVG className='h-5 w-5' />
+					</button>
+
+					<div className='h-5 border-l'></div>
+
+					<button
+						onClick={() => {
+							setActive(false)
+						}}
+						className='rounded p-1 hover:bg-gray-200 active:bg-gray-300 active:shadow-inner'>
+						<CloseSVG className='h-5 w-5' />
 					</button>
 				</div>
 			</motion.div>

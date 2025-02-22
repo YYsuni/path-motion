@@ -111,4 +111,12 @@ export class Point {
 		this.postControlPoint.x = -xDiff * ratio + this.x
 		this.postControlPoint.y = -yDiff * ratio + this.y
 	}
+
+	deleteSelf() {
+		const index = this.getIndex()
+		if (index > -1) {
+			this.pointsStore.points.splice(index, 1)
+			this.setPoints(s => [...s])
+		}
+	}
 }
