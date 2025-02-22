@@ -99,8 +99,8 @@ export default function Home() {
 						<ArrowHeadSVG
 							className='fixed z-[-1] w-8 origin-top'
 							style={{
-								left: points[points.length - 1].x - 16.5,
-								top: points[points.length - 1].y + 0.5,
+								left: points[points.length - 1].x - 16,
+								top: points[points.length - 1].y,
 								rotate: points[points.length - 1].getAngle() + 'deg'
 							}}
 						/>
