@@ -27,7 +27,10 @@ export default function PointControls({ activePoint }: Props) {
 
 	if (activePoint)
 		return (
-			<motion.div animate={{ left: activePoint.x, top: activePoint.y }} className={clsx('pointer-events-none fixed', !theActive && 'opacity-0')}>
+			<motion.div
+				initial={{ left: activePoint.x, top: activePoint.y }}
+				animate={{ left: activePoint.x, top: activePoint.y }}
+				className={clsx('pointer-events-none fixed', !theActive && 'opacity-0')}>
 				<div
 					onMouseDown={e => e.stopPropagation()}
 					className={clsx(

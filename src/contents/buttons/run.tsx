@@ -6,13 +6,14 @@ import { getPointAtLength, getTotalLength } from 'svg-path-commander'
 
 interface Props {
 	pointsStore: { points: Point[] }
+	staticize: Function
 }
 
 const speed = 500
 
 let currentAnimation = null as AnimationPlaybackControls | null
 
-function Run({ pointsStore }: Props) {
+function Run({ pointsStore, staticize }: Props) {
 	const ref = useRef<HTMLDivElement>(null)
 
 	return (
@@ -22,7 +23,10 @@ function Run({ pointsStore }: Props) {
 				className='fixed bottom-2 left-0 top-0 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-black bg-white'></div>
 
 			<button
-				onMouseDown={e => e.stopPropagation()}
+				onMouseDown={e => {
+					e.stopPropagation()
+					staticize()
+				}}
 				onClick={() => {
 					currentAnimation?.stop()
 

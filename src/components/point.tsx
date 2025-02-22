@@ -82,8 +82,6 @@ export default function PointComponent({ point }: Props) {
 					store.preControlStartOffetY = point.preControlPoint.y - point.y
 					store.postControlStartOffetX = point.postControlPoint.x - point.x
 					store.postControlStartOffetY = point.postControlPoint.y - point.y
-
-					console.log('store', store)
 				}}
 				onMouseEnter={() => setActive(true)}
 				onMouseOut={() => setActive(false)}

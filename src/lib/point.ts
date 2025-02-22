@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 import { uid } from 'uid'
+import { pointsToPath } from './utils'
+import { getPointAtLength, getTotalLength } from 'svg-path-commander'
 
 export class Point {
 	uid: string
@@ -40,6 +42,9 @@ export class Point {
 
 	getIndex() {
 		return this.pointsStore.points.findIndex(item => item.uid == this.uid)
+	}
+	getPoints() {
+		return this.pointsStore.points
 	}
 
 	getPrePoint() {
@@ -131,5 +136,16 @@ export class Point {
 			this.pointsStore.points.splice(index, 1)
 			this.setPoints(s => [...s])
 		}
+	}
+
+	getAngle() {
+		const points = this.getPoints()
+		if (points.length < 2) return 0
+
+		const lastPath = pointsToPath(this.getPoints().slice(-2))
+		const pathLength = getTotalLength(lastPath)
+		const prePoint = getPointAtLength(lastPath, pathLength - 1)
+
+		return Math.atan2(this.y - prePoint.y, this.x - prePoint.x) * (180 / Math.PI) + 90
 	}
 }

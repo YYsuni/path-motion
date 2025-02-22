@@ -7,15 +7,19 @@ import { motion } from 'motion/react'
 interface Props {
 	d: string
 	points: Point[]
+	staticize: Function
 }
 
-export default function Paper({ points, d }: Props) {
+export default function Paper({ points, d, staticize }: Props) {
 	const active = points.length > 0
 
 	if (active)
 		return (
 			<motion.div
-				onMouseDown={e => e.stopPropagation()}
+				onMouseDown={e => {
+					e.stopPropagation()
+					staticize()
+				}}
 				initial={{ display: 'none', scale: 0.4 }}
 				animate={{ display: 'block', scale: 1 }}
 				className='fixed bottom-8 left-8 max-w-[400px] rounded-lg bg-white/80 p-6 text-sm shadow-md backdrop-blur'>

@@ -9,6 +9,7 @@ import { pointsToPath } from '@/lib/utils'
 import { useCallback, useEffect, useState } from 'react'
 import Clear from '@/contents/buttons/clear'
 import PointControls from '@/components/point-controls'
+import ArrowHeadSVG from '@/svgs/arrowhead.svg'
 
 const store = {
 	points: [] as Point[],
@@ -33,6 +34,10 @@ export default function Home() {
 
 	const [points, setPoints] = useState<Point[]>([])
 	store.points = points
+	const staticize = useCallback(() => {
+		store.points.forEach(item => (item.active = false))
+		setPoints([...store.points])
+	}, [])
 	const clear = useCallback(() => setPoints([]), [])
 
 	const activePoint = points.find(item => item.active)
@@ -54,16 +59,22 @@ export default function Home() {
 			store.creatingPoint = null
 		}
 
+		const MIN_OFFSET = 5
 		const mounceMoveHandle = (e: MouseEvent) => {
 			const creatingPoint = store.creatingPoint
 			if (creatingPoint) {
-				creatingPoint.enablePreControl = true
-				creatingPoint.enablePostControl = true
-				creatingPoint.enableControlWeld = true
-				creatingPoint.enableControlEqual = true
+				if (Math.abs(e.x - creatingPoint.x) < MIN_OFFSET && Math.abs(e.y - creatingPoint.y) < MIN_OFFSET) return
+
+				if (!creatingPoint.enableControlEqual) {
+					creatingPoint.enablePreControl = true
+					creatingPoint.enablePostControl = true
+					creatingPoint.enableControlWeld = true
+					creatingPoint.enableControlEqual = true
+					creatingPoint.initPreControlPoint()
+				}
+
 				creatingPoint.postControlPoint.x = e.x
 				creatingPoint.postControlPoint.y = e.y
-				creatingPoint.initPreControlPoint()
 				creatingPoint.syncPreControlPoint()
 				creatingPoint.activate()
 			}
@@ -81,22 +92,34 @@ export default function Home() {
 	}, [])
 
 	return (
-		<div className='relative h-screen w-screen'>
+		<div className='relative h-screen w-screen overflow-hidden'>
 			{init && (
-				<svg viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`} fill='none' className='h-full w-full' xmlns='http://www.w3.org/2000/svg'>
-					<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
+				<>
+					{points.length > 1 && (
+						<ArrowHeadSVG
+							className='fixed z-[-1] w-8 origin-top'
+							style={{
+								left: points[points.length - 1].x - 16.5,
+								top: points[points.length - 1].y + 0.5,
+								rotate: points[points.length - 1].getAngle() + 'deg'
+							}}
+						/>
+					)}
+					<svg viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`} fill='none' className='relative h-full w-full' xmlns='http://www.w3.org/2000/svg'>
+						<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
 
-					{points.map((item, index) => (
-						<PointComponent key={item.uid} point={item} />
-					))}
-				</svg>
+						{points.map((item, index) => (
+							<PointComponent key={item.uid} point={item} />
+						))}
+					</svg>
+				</>
 			)}
 
-			<Paper d={d} points={points} />
+			<Paper d={d} points={points} staticize={staticize} />
 
 			<Buttons>
 				<Clear clear={clear} />
-				<Run pointsStore={store} />
+				<Run pointsStore={store} staticize={staticize} />
 			</Buttons>
 
 			<PointControls activePoint={activePoint} />
