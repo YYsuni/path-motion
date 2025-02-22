@@ -13,10 +13,11 @@ export default function PointComponent({ point }: Props) {
 
 	return (
 		<>
-			{point.active && point.enablePreControl && point.getPrePoint() && (
+			{point.active && point.enablePreControl && (
 				<>
 					<path d={`M${point.preControlPoint.x} ${point.preControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
+						onMouseDown={e => e.stopPropagation()}
 						onPan={e => {
 							e.stopPropagation()
 							point.preControlPoint.x = e.pageX
@@ -39,10 +40,11 @@ export default function PointComponent({ point }: Props) {
 					/>
 				</>
 			)}
-			{point.active && point.enablePostControl && point.getPostPoint() && (
+			{point.active && point.enablePostControl && (
 				<>
 					<path d={`M${point.postControlPoint.x} ${point.postControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
+						onMouseDown={e => e.stopPropagation()}
 						onPan={e => {
 							point.postControlPoint.x = e.pageX
 							point.postControlPoint.y = e.pageY
@@ -67,6 +69,7 @@ export default function PointComponent({ point }: Props) {
 			)}
 
 			<motion.circle
+				onMouseDown={e => e.stopPropagation()}
 				onMouseEnter={() => setActive(true)}
 				onMouseOut={() => setActive(false)}
 				onPan={e => {

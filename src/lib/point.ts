@@ -54,7 +54,9 @@ export class Point {
 		if (prePoint) {
 			const xDiff = prePoint.x - this.x
 			const yDiff = prePoint.y - this.y
+
 			const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+			if (!distance) return
 
 			const controlLength = Math.min(Point.ControlLength, distance - 10)
 			const ratio = controlLength / distance
@@ -65,17 +67,25 @@ export class Point {
 	}
 	initPostControlPoint() {
 		const postPoint = this.getPostPoint()
+		let xDiff = 0
+		let yDiff = 0
+
 		if (postPoint) {
-			const xDiff = postPoint.x - this.x
-			const yDiff = postPoint.y - this.y
-			const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
-
-			const controlLength = Math.min(Point.ControlLength, distance - 10)
-			const ratio = controlLength / distance
-
-			this.postControlPoint.x = xDiff * ratio + this.x
-			this.postControlPoint.y = yDiff * ratio + this.y
+			xDiff = postPoint.x - this.x
+			yDiff = postPoint.y - this.y
+		} else {
+			yDiff = 0
+			xDiff = Point.ControlLength
 		}
+
+		const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+		if (!distance) return
+
+		const controlLength = Math.min(Point.ControlLength, distance - 10)
+		const ratio = controlLength / distance
+
+		this.postControlPoint.x = xDiff * ratio + this.x
+		this.postControlPoint.y = yDiff * ratio + this.y
 	}
 	getPreControlLength() {
 		const xDiff = this.preControlPoint.x - this.x
@@ -90,6 +100,7 @@ export class Point {
 	syncPreControlPoint() {
 		const preControlLength = this.getPreControlLength()
 		const postControlLength = this.getPostControlLength()
+		if (!postControlLength) return
 
 		const ratio = preControlLength / postControlLength
 
@@ -102,6 +113,7 @@ export class Point {
 	syncPostControlPoint() {
 		const preControlLength = this.getPreControlLength()
 		const postControlLength = this.getPostControlLength()
+		if (!preControlLength) return
 
 		const ratio = postControlLength / preControlLength
 
