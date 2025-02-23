@@ -14,7 +14,9 @@ import ClosePath from '@/contents/buttons/close-path'
 
 const store = {
 	points: [] as Point[],
-	creatingPoint: null as Point | null
+	creatingPoint: null as Point | null,
+	closedPath: false,
+	d: ''
 }
 
 export default function Home() {
@@ -44,9 +46,11 @@ export default function Home() {
 	const activePoint = points.find(item => item.active)
 
 	const [closedPath, triggerClosedPath] = useReducer(s => !s, false)
-	const thePoints = points.length > 2 && closedPath ? points.concat(points[0]) : points
+	store.closedPath = closedPath
+	const endPoint = points.length > 2 && closedPath ? points[0] : points[points.length - 1]
 
 	const d = pointsToPath(points, closedPath)
+	store.d = d
 
 	useEffect(() => {
 		const mouceDownHandle = (e: MouseEvent) => {
@@ -105,13 +109,17 @@ export default function Home() {
 						<ArrowHeadSVG
 							className='fixed z-[-1] w-8 origin-top'
 							style={{
-								left: thePoints[thePoints.length - 1].x - 16,
-								top: thePoints[thePoints.length - 1].y,
-								rotate: thePoints[thePoints.length - 1].getAngle() + 'deg'
+								left: endPoint.x - 16,
+								top: endPoint.y,
+								rotate: endPoint.getAngle() + 'deg'
 							}}
 						/>
 					)}
-					<svg viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`} fill='none' className='relative h-full w-full' xmlns='http://www.w3.org/2000/svg'>
+					<svg
+						viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}
+						fill='none'
+						className='relative h-full w-full select-none'
+						xmlns='http://www.w3.org/2000/svg'>
 						<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
 
 						{points.map((item, index) => (

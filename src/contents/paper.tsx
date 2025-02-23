@@ -23,7 +23,7 @@ export default function Paper({ points, d, staticize }: Props) {
 				}}
 				initial={{ display: 'none', scale: 0.4 }}
 				animate={{ display: 'block', scale: 1 }}
-				className='fixed bottom-8 left-8 max-w-[400px] rounded-lg bg-white/80 p-6 text-sm shadow-md backdrop-blur'>
+				className='pointer-events-auto fixed bottom-8 left-8 max-w-[400px] rounded-lg bg-white/80 p-6 text-sm shadow-md backdrop-blur'>
 				<ul className='space-y-3'>
 					<li>
 						<div>

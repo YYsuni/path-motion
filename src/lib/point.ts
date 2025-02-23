@@ -20,7 +20,8 @@ export class Point {
 	static ControlLength = 40
 
 	pointsStore = {
-		points: [] as Point[]
+		points: [] as Point[],
+		closedPath: false
 	}
 
 	constructor({ x, y, setPoints, pointsStore }: { x: number; y: number; setPoints: Dispatch<SetStateAction<Point[]>>; pointsStore: any }) {
@@ -57,19 +58,24 @@ export class Point {
 	}
 	initPreControlPoint() {
 		const prePoint = this.getPrePoint()
+		let xDiff = 0
+		let yDiff = 0
+
 		if (prePoint) {
-			const xDiff = prePoint.x - this.x
-			const yDiff = prePoint.y - this.y
-
-			const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
-			if (!distance) return
-
-			const controlLength = Math.min(Point.ControlLength, distance - 10)
-			const ratio = controlLength / distance
-
-			this.preControlPoint.x = xDiff * ratio + this.x
-			this.preControlPoint.y = yDiff * ratio + this.y
+			xDiff = prePoint.x - this.x
+			yDiff = prePoint.y - this.y
+		} else {
+			xDiff = -Point.ControlLength
 		}
+
+		const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+		if (!distance) return
+
+		const controlLength = Math.min(Point.ControlLength, distance - 10)
+		const ratio = controlLength / distance
+
+		this.preControlPoint.x = xDiff * ratio + this.x
+		this.preControlPoint.y = yDiff * ratio + this.y
 	}
 	initPostControlPoint() {
 		const postPoint = this.getPostPoint()
@@ -80,7 +86,6 @@ export class Point {
 			xDiff = postPoint.x - this.x
 			yDiff = postPoint.y - this.y
 		} else {
-			yDiff = 0
 			xDiff = Point.ControlLength
 		}
 
@@ -139,10 +144,16 @@ export class Point {
 	}
 
 	getAngle() {
+		let lastPath = ''
 		const points = this.getPoints()
-		if (points.length < 2) return 0
 
-		const lastPath = pointsToPath(this.getPoints().slice(-2))
+		if (this.pointsStore.closedPath && this.getIndex() == 0) {
+			lastPath = pointsToPath([points[points.length - 1], points[0]])
+		} else {
+			if (points.length < 2) return 0
+			lastPath = pointsToPath(points.slice(-2))
+		}
+
 		const pathLength = getTotalLength(lastPath)
 		const prePoint = getPointAtLength(lastPath, pathLength - 1)
 

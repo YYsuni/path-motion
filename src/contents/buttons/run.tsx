@@ -8,7 +8,7 @@ import MinusSVG from '@/svgs/buttons/minus.svg'
 import PlusSVG from '@/svgs/buttons/plus.svg'
 
 interface Props {
-	pointsStore: { points: Point[] }
+	pointsStore: { points: Point[]; d: string }
 }
 
 let currentAnimation = null as AnimationPlaybackControls | null
@@ -28,10 +28,12 @@ function Run({ pointsStore }: Props) {
 				<label>
 					<span className='text-xs text-secondary'>Speed</span>
 					<div className='relative flex items-center'>
-						<button onClick={() => setSpeed(s => String(Math.max(0, +s - 100)))} className='absolute left-1 rounded border bg-white p-1 text-[24px]'>
+						<button
+							onClick={() => setSpeed(s => String(Math.max(0, +s - 100)))}
+							className='absolute left-1 rounded border bg-white p-1 text-[24px] active:bg-gray-200'>
 							<MinusSVG className='h-4 w-4' />
 						</button>
-						<button onClick={() => setSpeed(s => String(+s + 100))} className='absolute right-1 rounded border bg-white p-1 text-[24px]'>
+						<button onClick={() => setSpeed(s => String(+s + 100))} className='absolute right-1 rounded border bg-white p-1 text-[24px] active:bg-gray-200'>
 							<PlusSVG className='h-4 w-4' />
 						</button>
 						<input
@@ -49,7 +51,7 @@ function Run({ pointsStore }: Props) {
 					onClick={() => {
 						currentAnimation?.stop()
 
-						const d = pointsToPath(pointsStore.points)
+						const d = pointsStore.d
 						const pathLength = getTotalLength(d)
 
 						ref.current!.style.display = 'block'
