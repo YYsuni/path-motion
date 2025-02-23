@@ -11,12 +11,14 @@ import Clear from '@/contents/buttons/clear'
 import PointControls from '@/components/point-controls'
 import ArrowHeadSVG from '@/svgs/arrowhead.svg'
 import ClosePath from '@/contents/buttons/close-path'
+import { getTotalLength } from 'svg-path-commander'
 
 const store = {
 	points: [] as Point[],
 	creatingPoint: null as Point | null,
 	closedPath: false,
-	d: ''
+	d: '',
+	totalLength: 0
 }
 
 export default function Home() {
@@ -50,7 +52,9 @@ export default function Home() {
 	const endPoint = points.length > 2 && closedPath ? points[0] : points[points.length - 1]
 
 	const d = pointsToPath(points, closedPath)
+	const totalLength = getTotalLength(d)
 	store.d = d
+	store.totalLength = totalLength
 
 	useEffect(() => {
 		const mouceDownHandle = (e: MouseEvent) => {
@@ -115,6 +119,7 @@ export default function Home() {
 							}}
 						/>
 					)}
+
 					<svg
 						viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}
 						fill='none'
@@ -129,7 +134,7 @@ export default function Home() {
 				</>
 			)}
 
-			<Paper d={d} points={points} staticize={staticize} />
+			<Paper d={d} points={points} setPoints={setPoints} staticize={staticize} totalLength={totalLength} />
 
 			<Buttons staticize={staticize}>
 				<div className='flex flex-col gap-3'>

@@ -8,7 +8,7 @@ import MinusSVG from '@/svgs/buttons/minus.svg'
 import PlusSVG from '@/svgs/buttons/plus.svg'
 
 interface Props {
-	pointsStore: { points: Point[]; d: string }
+	pointsStore: { points: Point[]; d: string; totalLength: number }
 }
 
 let currentAnimation = null as AnimationPlaybackControls | null
@@ -52,7 +52,7 @@ function Run({ pointsStore }: Props) {
 						currentAnimation?.stop()
 
 						const d = pointsStore.d
-						const pathLength = getTotalLength(d)
+						const pathLength = pointsStore.totalLength
 
 						ref.current!.style.display = 'block'
 						currentAnimation = animate(0, 100, {

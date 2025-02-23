@@ -30,3 +30,7 @@ export function pointsToPath(points: Point[], closedPath?: boolean): string {
 
 	return d
 }
+
+export function fixNumber(value: string | number, decimals = 2) {
+	return +Number(value).toFixed(decimals)
+}
