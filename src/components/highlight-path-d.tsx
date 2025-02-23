@@ -1,11 +1,11 @@
-import { ReactElement, useEffect, useState, useTransition } from 'react'
+import { ReactElement, useState } from 'react'
 import { debounce } from 'ts-debounce'
 
 interface Props {
 	d: string
 }
 
-const handle = (setArr: any, d: string) => {
+const renderD = (d: string) => {
 	const arr: ReactElement[] = []
 	let j = 0
 	for (let i = 0; i < d.length; i++) {
@@ -25,13 +25,18 @@ const handle = (setArr: any, d: string) => {
 		arr.push(<span key={'end'}>{d.slice(j + 1)}</span>)
 	}
 
+	return arr
+}
+
+const handle = (setArr: any, d: string) => {
+	const arr = renderD(d)
 	setArr(arr)
 }
 
 const debouncedHandle = debounce(handle, 100)
 
 export default function HighlightPathD({ d }: Props) {
-	const [arr, setArr] = useState<ReactElement[]>([])
+	const [arr, setArr] = useState<ReactElement[]>(renderD(d))
 
 	debouncedHandle(setArr, d)
 
