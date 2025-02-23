@@ -46,6 +46,8 @@ export default function Home() {
 
 	useEffect(() => {
 		const mouceDownHandle = (e: MouseEvent) => {
+			if (e.which !== 1) return
+
 			const point = new Point({ x: e.pageX, y: e.pageY, setPoints, pointsStore: store })
 			setPoints(state => {
 				state.forEach(item => (item.active = false))
@@ -117,9 +119,9 @@ export default function Home() {
 
 			<Paper d={d} points={points} staticize={staticize} />
 
-			<Buttons>
+			<Buttons staticize={staticize}>
 				<Clear clear={clear} />
-				<Run pointsStore={store} staticize={staticize} />
+				<Run pointsStore={store} />
 			</Buttons>
 
 			<PointControls activePoint={activePoint} />

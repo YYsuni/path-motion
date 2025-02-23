@@ -1,6 +1,7 @@
 import HighlightPathD from '@/components/highlight-path-d'
 import { Point } from '@/lib/point'
 import { motion } from 'motion/react'
+import { getTotalLength } from 'svg-path-commander'
 // import JsonView from 'react18-json-view'
 // import 'react18-json-view/src/style.css'
 
@@ -23,7 +24,7 @@ export default function Paper({ points, d, staticize }: Props) {
 				initial={{ display: 'none', scale: 0.4 }}
 				animate={{ display: 'block', scale: 1 }}
 				className='fixed bottom-8 left-8 max-w-[400px] rounded-lg bg-white/80 p-6 text-sm shadow-md backdrop-blur'>
-				<ul>
+				<ul className='space-y-3'>
 					<li>
 						<div>
 							Path <span className='rounded bg-gray-100 px-1 font-mono'>d</span> :
@@ -31,6 +32,10 @@ export default function Paper({ points, d, staticize }: Props) {
 						<div className='mt-1 rounded-md bg-gray-100 p-3 text-xs text-secondary'>
 							<HighlightPathD d={d} />
 						</div>
+					</li>
+					<li>
+						<div>Path Length :</div>
+						<div className='mt-1 rounded-md bg-gray-100 p-3 text-xs text-secondary'>{getTotalLength(d)}</div>
 					</li>
 				</ul>
 			</motion.div>
