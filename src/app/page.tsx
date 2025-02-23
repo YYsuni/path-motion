@@ -6,10 +6,11 @@ import Buttons from '@/contents/buttons'
 import Paper from '@/contents/paper'
 import { Point } from '@/lib/point'
 import { pointsToPath } from '@/lib/utils'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 import Clear from '@/contents/buttons/clear'
 import PointControls from '@/components/point-controls'
 import ArrowHeadSVG from '@/svgs/arrowhead.svg'
+import ClosePath from '@/contents/buttons/close-path'
 
 const store = {
 	points: [] as Point[],
@@ -42,7 +43,10 @@ export default function Home() {
 
 	const activePoint = points.find(item => item.active)
 
-	const d = pointsToPath(points)
+	const [closedPath, triggerClosedPath] = useReducer(s => !s, false)
+	const thePoints = points.length > 2 && closedPath ? points.concat(points[0]) : points
+
+	const d = pointsToPath(points, closedPath)
 
 	useEffect(() => {
 		const mouceDownHandle = (e: MouseEvent) => {
@@ -101,9 +105,9 @@ export default function Home() {
 						<ArrowHeadSVG
 							className='fixed z-[-1] w-8 origin-top'
 							style={{
-								left: points[points.length - 1].x - 16,
-								top: points[points.length - 1].y,
-								rotate: points[points.length - 1].getAngle() + 'deg'
+								left: thePoints[thePoints.length - 1].x - 16,
+								top: thePoints[thePoints.length - 1].y,
+								rotate: thePoints[thePoints.length - 1].getAngle() + 'deg'
 							}}
 						/>
 					)}
@@ -120,7 +124,10 @@ export default function Home() {
 			<Paper d={d} points={points} staticize={staticize} />
 
 			<Buttons staticize={staticize}>
-				<Clear clear={clear} />
+				<div className='flex flex-col gap-3'>
+					<ClosePath closePath={triggerClosedPath} closedPath={closedPath} />
+					<Clear clear={clear} />
+				</div>
 				<Run pointsStore={store} />
 			</Buttons>
 

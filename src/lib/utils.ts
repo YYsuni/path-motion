@@ -1,7 +1,11 @@
 import { Point } from './point'
 
-export function pointsToPath(points: Point[]): string {
+export function pointsToPath(points: Point[], closedPath?: boolean): string {
 	if (points.length == 0) return ''
+
+	if (closedPath) {
+		points = points.concat(points[0])
+	}
 
 	let d = ''
 
