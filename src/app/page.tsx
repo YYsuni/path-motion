@@ -12,6 +12,7 @@ import PointControls from '@/components/point-controls'
 import ArrowHeadSVG from '@/svgs/arrowhead.svg'
 import ClosePath from '@/contents/buttons/close-path'
 import { getTotalLength } from 'svg-path-commander'
+import { debounceSave, getLocalMeta, getLocalPoints } from '@/lib/storage'
 
 const store = {
 	points: [] as Point[],
@@ -57,6 +58,14 @@ export default function Home() {
 	store.totalLength = totalLength
 
 	useEffect(() => {
+		// Init points from local storage
+		const localPoints = getLocalPoints(setPoints, store)
+		if (localPoints) setPoints(localPoints)
+		const localMeta = getLocalMeta()
+		if (localMeta) triggerClosedPath()
+
+		// Events handling
+
 		const mouceDownHandle = (e: MouseEvent) => {
 			if (e.which !== 1) return
 
@@ -104,6 +113,9 @@ export default function Home() {
 			window.removeEventListener('mousemove', mounceMoveHandle)
 		}
 	}, [])
+	useEffect(() => {
+		debounceSave(points, closedPath)
+	}, [points, closedPath])
 
 	return (
 		<div className='relative h-screen w-screen overflow-hidden'>

@@ -7,7 +7,7 @@ export class Point {
 	uid: string
 	x: number
 	y: number
-	active: boolean = true
+	active: boolean = false
 	setPoints: Dispatch<SetStateAction<Point[]>>
 
 	preControlPoint = { x: 0, y: 0 }
