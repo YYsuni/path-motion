@@ -29,7 +29,7 @@ export default function PointControls({ activePoint }: Props) {
 		return (
 			<motion.div
 				initial={{ left: activePoint.x, top: activePoint.y }}
-				animate={{ left: activePoint.x, top: activePoint.y }}
+				animate={{ left: Math.min(Math.max(activePoint.x, 140), window.innerWidth - 138), top: Math.min(activePoint.y, window.innerHeight - 74) }}
 				className={clsx('pointer-events-none fixed', !theActive && 'opacity-0')}>
 				<div
 					onMouseDown={e => e.stopPropagation()}

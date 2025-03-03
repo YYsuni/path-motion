@@ -21,7 +21,8 @@ const store = {
 	closedPath: false,
 	d: '',
 	totalLength: 0,
-	mode: 'normal' as CanvasMode
+	mode: 'normal' as CanvasMode,
+	addable: true
 }
 
 export default function Home() {
@@ -30,7 +31,9 @@ export default function Home() {
 
 	// Canvas mode
 	const [mode, setMode] = useState<CanvasMode>('normal')
+	const [addable, setAddable] = useState(true)
 	store.mode = mode
+	store.addable = addable
 
 	const [points, setPoints] = useState<Point[]>([])
 	store.points = points
@@ -58,6 +61,7 @@ export default function Home() {
 		const reszieHandle = () => {
 			setScreenSize([window.innerWidth, window.innerHeight])
 		}
+		reszieHandle()
 		window.addEventListener('resize', reszieHandle)
 
 		// Keyboard events
@@ -78,7 +82,7 @@ export default function Home() {
 
 		const mouceDownHandle = (e: MouseEvent) => {
 			if (e.which !== 1) return
-			if (store.mode === 'view' && store.points?.length > 1) return
+			if (!store.addable && store.points?.length > 1) return
 
 			const point = new Point({ x: e.pageX, y: e.pageY, setPoints, pointsStore: store })
 			setPoints(state => {
@@ -129,6 +133,8 @@ export default function Home() {
 		}
 	}, [])
 	useEffect(() => {
+		if (points.length === 0) setAddable(true)
+
 		debounceSave(points, closedPath)
 	}, [points, closedPath])
 
@@ -147,11 +153,7 @@ export default function Home() {
 						/>
 					)}
 
-					<svg
-						viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}
-						fill='none'
-						className='relative h-full w-full select-none'
-						xmlns='http://www.w3.org/2000/svg'>
+					<svg viewBox={`0 0 ${screenWidth} ${screenHeight}`} fill='none' className='relative h-full w-full select-none' xmlns='http://www.w3.org/2000/svg'>
 						<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
 
 						{points.map((item, index) => (
@@ -161,7 +163,17 @@ export default function Home() {
 				</>
 			)}
 
-			<Paper d={d} points={points} setPoints={setPoints} staticize={staticize} totalLength={totalLength} mode={mode} setMode={setMode} />
+			<Paper
+				d={d}
+				points={points}
+				setPoints={setPoints}
+				staticize={staticize}
+				totalLength={totalLength}
+				mode={mode}
+				setMode={setMode}
+				addable={addable}
+				setAddable={setAddable}
+			/>
 
 			<Buttons staticize={staticize}>
 				<div className='flex flex-col gap-3'>

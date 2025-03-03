@@ -22,7 +22,6 @@ export default function PointComponent({ point, mode }: Props) {
 
 	const animateStyle = useMemo(() => {
 		switch (`${theActive}, ${mode}`) {
-			case 'true, view':
 			case 'true, normal':
 			case 'true, point':
 			case 'false, refine':
@@ -45,7 +44,6 @@ export default function PointComponent({ point, mode }: Props) {
 					scale: 0.8
 				}
 
-			case 'false, view':
 			case 'false, normal':
 			default:
 				return {
@@ -58,7 +56,7 @@ export default function PointComponent({ point, mode }: Props) {
 
 	return (
 		<>
-			{(mode === 'refine' || (point.active && point.enablePreControl)) && (
+			{(mode === 'refine' || point.active) && point.enablePreControl && (
 				<>
 					<path d={`M${point.preControlPoint.x} ${point.preControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
@@ -78,14 +76,14 @@ export default function PointComponent({ point, mode }: Props) {
 						className='cursor-pointer'
 						strokeWidth={2}
 						fill='white'
-						stroke='black'
+						stroke='#444'
 						r={5}
 						cx={point.preControlPoint.x}
 						cy={point.preControlPoint.y}
 					/>
 				</>
 			)}
-			{(mode === 'refine' || (point.active && point.enablePostControl)) && (
+			{(mode === 'refine' || point.active) && point.enablePostControl && (
 				<>
 					<path d={`M${point.postControlPoint.x} ${point.postControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
@@ -105,7 +103,7 @@ export default function PointComponent({ point, mode }: Props) {
 						className='cursor-pointer'
 						strokeWidth={2}
 						fill='white'
-						stroke='black'
+						stroke='#444'
 						r={5}
 						cx={point.postControlPoint.x}
 						cy={point.postControlPoint.y}
