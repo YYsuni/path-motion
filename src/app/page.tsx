@@ -13,30 +13,24 @@ import ArrowHeadSVG from '@/svgs/arrowhead.svg'
 import ClosePath from '@/contents/buttons/close-path'
 import { getTotalLength } from 'svg-path-commander'
 import { debounceSave, getLocalMeta, getLocalPoints } from '@/lib/storage'
+import { CanvasMode } from '@/consts'
 
 const store = {
 	points: [] as Point[],
 	creatingPoint: null as Point | null,
 	closedPath: false,
 	d: '',
-	totalLength: 0
+	totalLength: 0,
+	mode: 'normal' as CanvasMode
 }
 
 export default function Home() {
 	const [init, setInit] = useState(false)
-	useEffect(() => {
-		setInit(true)
+	const [[screenWidth, screenHeight], setScreenSize] = useState([0, 0])
 
-		// const keypressHandler = (e: KeyboardEvent) => {
-		// 	if (e.key === 'Delete') {
-		// 	}
-		// }
-		// window.addEventListener('keypress', keypressHandler)
-
-		// return () => {
-		// 	window.removeEventListener('keypress', keypressHandler)
-		// }
-	}, [])
+	// Canvas mode
+	const [mode, setMode] = useState<CanvasMode>('normal')
+	store.mode = mode
 
 	const [points, setPoints] = useState<Point[]>([])
 	store.points = points
@@ -58,6 +52,22 @@ export default function Home() {
 	store.totalLength = totalLength
 
 	useEffect(() => {
+		setInit(true)
+
+		// Screen resize
+		const reszieHandle = () => {
+			setScreenSize([window.innerWidth, window.innerHeight])
+		}
+		window.addEventListener('resize', reszieHandle)
+
+		// Keyboard events
+		const keypressHandle = (e: KeyboardEvent) => {
+			console.log('e', e)
+			if (e.key === 'Delete') {
+			}
+		}
+		window.addEventListener('keypress', keypressHandle, { capture: true })
+
 		// Init points from local storage
 		const localPoints = getLocalPoints(setPoints, store)
 		if (localPoints) setPoints(localPoints)
@@ -68,6 +78,7 @@ export default function Home() {
 
 		const mouceDownHandle = (e: MouseEvent) => {
 			if (e.which !== 1) return
+			if (store.mode === 'view' && store.points?.length > 1) return
 
 			const point = new Point({ x: e.pageX, y: e.pageY, setPoints, pointsStore: store })
 			setPoints(state => {
@@ -108,6 +119,10 @@ export default function Home() {
 		window.addEventListener('mousemove', mounceMoveHandle)
 
 		return () => {
+			window.removeEventListener('resize', reszieHandle)
+
+			window.removeEventListener('keypress', keypressHandle, { capture: true })
+
 			window.removeEventListener('mousedown', mouceDownHandle)
 			window.removeEventListener('mouseup', mouceUpHandle)
 			window.removeEventListener('mousemove', mounceMoveHandle)
@@ -140,13 +155,13 @@ export default function Home() {
 						<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
 
 						{points.map((item, index) => (
-							<PointComponent key={item.uid} point={item} />
+							<PointComponent key={item.uid} point={item} mode={mode} />
 						))}
 					</svg>
 				</>
 			)}
 
-			<Paper d={d} points={points} setPoints={setPoints} staticize={staticize} totalLength={totalLength} />
+			<Paper d={d} points={points} setPoints={setPoints} staticize={staticize} totalLength={totalLength} mode={mode} setMode={setMode} />
 
 			<Buttons staticize={staticize}>
 				<div className='flex flex-col gap-3'>

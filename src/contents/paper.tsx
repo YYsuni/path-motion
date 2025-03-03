@@ -6,6 +6,8 @@ import { Dispatch, SetStateAction, useReducer, useState } from 'react'
 import { getTotalLength } from 'svg-path-commander'
 import DocSVG from '@/svgs/doc.svg'
 import { div } from 'motion/react-client'
+import { CanvasMode, canvasModes } from '@/consts'
+import clsx from 'clsx'
 // import JsonView from 'react18-json-view'
 // import 'react18-json-view/src/style.css'
 
@@ -15,9 +17,11 @@ interface Props {
 	setPoints: Dispatch<SetStateAction<Point[]>>
 	totalLength: number
 	staticize: Function
+	mode: CanvasMode
+	setMode: Dispatch<SetStateAction<CanvasMode>>
 }
 
-export default function Paper({ points, d, staticize, totalLength, setPoints }: Props) {
+export default function Paper({ points, d, staticize, totalLength, setPoints, mode, setMode }: Props) {
 	const active = points.length > 0
 	const [open, triggerOpen] = useReducer(s => !s, true)
 
@@ -64,6 +68,14 @@ export default function Paper({ points, d, staticize, totalLength, setPoints }: 
 									className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
 									Minify
 								</button>
+
+								<ul className='flex items-center overflow-hidden rounded border text-secondary'>
+									{canvasModes.map(item => (
+										<li onClick={() => setMode(item)} className={clsx('cursor-pointer px-2 py-1', item === mode && 'bg-brand/10 text-brand')} key={item}>
+											{item}
+										</li>
+									))}
+								</ul>
 							</li>
 						</ul>
 					</motion.div>

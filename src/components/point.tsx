@@ -1,11 +1,8 @@
+import { CanvasMode } from '@/consts'
 import { Point } from '@/lib/point'
 import { dispatchEvent } from '@/lib/window-event'
 import { motion } from 'motion/react'
-import { useState } from 'react'
-
-interface Props {
-	point: Point
-}
+import { useMemo, useState } from 'react'
 
 const store = {
 	preControlStartOffetX: 0,
@@ -14,13 +11,54 @@ const store = {
 	postControlStartOffetY: 0
 }
 
-export default function PointComponent({ point }: Props) {
+interface Props {
+	point: Point
+	mode: CanvasMode
+}
+
+export default function PointComponent({ point, mode }: Props) {
 	const [active, setActive] = useState(false)
 	const theActive = active || point.active
 
+	const animateStyle = useMemo(() => {
+		switch (`${theActive}, ${mode}`) {
+			case 'true, view':
+			case 'true, normal':
+			case 'true, point':
+			case 'false, refine':
+				return {
+					fill: 'white',
+					stroke: 'black',
+					scale: 1
+				}
+			case 'true, refine':
+				return {
+					fill: 'white',
+					stroke: '#006aeb',
+					scale: 1
+				}
+
+			case 'false, point':
+				return {
+					fill: 'black',
+					stroke: 'transparent',
+					scale: 0.8
+				}
+
+			case 'false, view':
+			case 'false, normal':
+			default:
+				return {
+					fill: 'transparent',
+					stroke: 'transparent',
+					scale: 0.8
+				}
+		}
+	}, [mode, theActive])
+
 	return (
 		<>
-			{point.active && point.enablePreControl && (
+			{(mode === 'refine' || (point.active && point.enablePreControl)) && (
 				<>
 					<path d={`M${point.preControlPoint.x} ${point.preControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
@@ -47,7 +85,7 @@ export default function PointComponent({ point }: Props) {
 					/>
 				</>
 			)}
-			{point.active && point.enablePostControl && (
+			{(mode === 'refine' || (point.active && point.enablePostControl)) && (
 				<>
 					<path d={`M${point.postControlPoint.x} ${point.postControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
@@ -103,11 +141,7 @@ export default function PointComponent({ point }: Props) {
 				cx={point.x}
 				cy={point.y}
 				r={6}
-				animate={{
-					fill: theActive ? 'white' : 'transparent',
-					stroke: theActive ? 'black' : 'transparent',
-					scale: theActive ? 1 : 0.8
-				}}
+				animate={animateStyle}
 				strokeWidth={2}
 				className='cursor-pointer'
 			/>
