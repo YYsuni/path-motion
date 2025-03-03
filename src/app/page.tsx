@@ -64,14 +64,6 @@ export default function Home() {
 		reszieHandle()
 		window.addEventListener('resize', reszieHandle)
 
-		// Keyboard events
-		const keypressHandle = (e: KeyboardEvent) => {
-			console.log('e', e)
-			if (e.key === 'Delete') {
-			}
-		}
-		window.addEventListener('keypress', keypressHandle, { capture: true })
-
 		// Init points from local storage
 		const localPoints = getLocalPoints(setPoints, store)
 		if (localPoints) setPoints(localPoints)
@@ -125,8 +117,6 @@ export default function Home() {
 		return () => {
 			window.removeEventListener('resize', reszieHandle)
 
-			window.removeEventListener('keypress', keypressHandle, { capture: true })
-
 			window.removeEventListener('mousedown', mouceDownHandle)
 			window.removeEventListener('mouseup', mouceUpHandle)
 			window.removeEventListener('mousemove', mounceMoveHandle)
@@ -139,7 +129,14 @@ export default function Home() {
 	}, [points, closedPath])
 
 	return (
-		<div className='relative h-screen w-screen overflow-hidden'>
+		<div
+			className='relative h-screen w-screen overflow-hidden focus-visible:outline-none'
+			tabIndex={1}
+			onKeyDown={e => {
+				if ((e.key === 'Delete' || e.code === 'Backspace') && activePoint) {
+					activePoint?.deleteSelf()
+				}
+			}}>
 			{init && (
 				<>
 					{points.length > 1 && (
