@@ -9,22 +9,22 @@ export function pointsToPath(points: Point[], closedPath?: boolean): string {
 
 	let d = ''
 
-	d += `M${points[0].x} ${points[0].y} `
+	d += `M${points[0].x},${points[0].y} `
 
 	for (let i = 1; i < points.length; i++) {
 		const prePoint = points[i - 1]
 		const point = points[i]
 
 		if (prePoint.enablePostControl || point.enablePreControl) {
-			if (prePoint.enablePostControl) d += `C${prePoint.postControlPoint.x} ${prePoint.postControlPoint.y} `
-			else d += `C${prePoint.x} ${prePoint.y} `
+			if (prePoint.enablePostControl) d += `C${prePoint.postControlPoint.x},${prePoint.postControlPoint.y} `
+			else d += `C${prePoint.x},${prePoint.y} `
 
-			if (point.enablePreControl) d += `${point.preControlPoint.x} ${point.preControlPoint.y} `
-			else d += `${point.x} ${point.y} `
+			if (point.enablePreControl) d += `${point.preControlPoint.x},${point.preControlPoint.y} `
+			else d += `${point.x},${point.y} `
 
-			d += `${point.x} ${point.y} `
+			d += `${point.x},${point.y} `
 		} else {
-			d += `L${points[i].x} ${points[i].y} `
+			d += `L${points[i].x},${points[i].y} `
 		}
 	}
 

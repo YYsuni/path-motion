@@ -14,7 +14,7 @@ const renderD = (d: string) => {
 				arr.push(<span key={'n' + i + j}>{d.slice(j + 1, i)}</span>)
 			}
 			arr.push(
-				<span key={i} className='font-semibold'>
+				<span key={i} className='font-medium text-brand'>
 					{d[i]}
 				</span>
 			)

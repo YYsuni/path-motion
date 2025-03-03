@@ -39,13 +39,13 @@ export default function Paper({ points, d, staticize, totalLength, setPoints }: 
 								<div>
 									Path <span className='rounded bg-gray-100 px-1 font-mono'>d</span> :
 								</div>
-								<div className='mt-1 rounded-md bg-gray-100 p-3 text-xs text-secondary'>
+								<div className='mt-1 rounded-md bg-gray-100 p-3 font-mono text-xs text-secondary'>
 									<HighlightPathD d={d} />
 								</div>
 							</li>
 							<li>
 								<div>Path Length :</div>
-								<div className='mt-1 rounded-md bg-gray-100 p-3 text-xs text-secondary'>{totalLength}</div>
+								<div className='mt-1 rounded-md bg-gray-100 p-3 font-mono text-xs text-secondary'>{totalLength}</div>
 							</li>
 
 							<li className='flex items-center gap-1.5'>
