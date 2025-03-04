@@ -5,14 +5,14 @@ import Run from '@/contents/buttons/run'
 import Buttons from '@/contents/buttons'
 import Paper from '@/contents/paper'
 import { Point } from '@/lib/point'
-import { pointsToPath } from '@/lib/utils'
+import { isBetween, pointsToPath } from '@/lib/utils'
 import { useCallback, useEffect, useReducer, useState } from 'react'
 import Clear from '@/contents/buttons/clear'
 import PointControls from '@/components/point-controls'
 import ArrowHeadSVG from '@/svgs/arrowhead.svg'
 import ClosePath from '@/contents/buttons/close-path'
 import { getTotalLength } from 'svg-path-commander'
-import { debounceSave, getLocalMeta, getLocalPoints } from '@/lib/storage'
+import { debounceSave, getLocalMeta, getLocalPoints, getStorage, setStorage } from '@/lib/storage'
 import { CanvasMode, MouseMode } from '@/consts'
 
 const store = {
@@ -77,6 +77,12 @@ export default function Home() {
 		if (localPoints) setPoints(localPoints)
 		const localMeta = getLocalMeta()
 		if (localMeta) triggerClosedPath()
+
+		// Init modes from local storage
+		const localCanvasMode = getStorage('canvasMode')
+		const localMouseMode = getStorage('mouseMode')
+		if (localCanvasMode) setCanvasMode(localCanvasMode as any)
+		if (localMouseMode) setMouseMode(localMouseMode as any)
 
 		// Screen resize
 		const reszieHandle = () => {
@@ -160,18 +166,29 @@ export default function Home() {
 		}
 	}, [])
 	useEffect(() => {
-		if (points.length === 0) setMouseMode('create')
-
 		debounceSave(points, closedPath)
 	}, [points, closedPath])
+	useEffect(() => {
+		setStorage('canvasMode', canvasMode)
+		setStorage('mouseMode', mouseMode)
+	}, [canvasMode, mouseMode])
 
 	return (
 		<div
 			className='relative h-screen w-screen overflow-hidden focus-visible:outline-none'
 			tabIndex={1}
 			onKeyDown={e => {
-				if ((e.key === 'Delete' || e.code === 'Backspace') && activePoint) {
+				if (e.key === 'Delete' || e.code === 'Backspace') {
 					activePoint?.deleteSelf()
+
+					if (betterSelectedRect) {
+						const unselectedPoints = points.filter(
+							item =>
+								!(isBetween(item.x, betterSelectedRect[0].x, betterSelectedRect[1].x) && isBetween(item.y, betterSelectedRect[0].y, betterSelectedRect[1].y))
+						)
+
+						setPoints(unselectedPoints)
+					}
 				}
 			}}>
 			{init && (
