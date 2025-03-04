@@ -193,6 +193,10 @@ export default function Home() {
 			}}>
 			{init && (
 				<>
+					<div className='pointer-events-none fixed bottom-1 right-1 font-mono text-xs text-gray-400'>
+						{screenWidth}x{screenHeight}
+					</div>
+
 					{points.length > 1 && (
 						<ArrowHeadSVG
 							className='fixed z-[-1] w-8 origin-top'
