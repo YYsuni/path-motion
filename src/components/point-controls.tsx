@@ -28,14 +28,13 @@ export default function PointControls({ activePoint }: Props) {
 
 	if (activePoint)
 		return (
-			<motion.div
-				initial={{ left: activePoint.x, top: activePoint.y }}
-				animate={{ left: Math.min(Math.max(activePoint.x, 140), window.innerWidth - 138), top: Math.min(activePoint.y, window.innerHeight - 74) }}
+			<div
+				style={{ left: Math.min(Math.max(activePoint.x, 140), window.innerWidth - 138), top: Math.min(activePoint.y, window.innerHeight - 74) }}
 				className={clsx('pointer-events-none fixed', !theActive && 'opacity-0')}>
 				<div
 					onMouseDown={e => e.stopPropagation()}
 					className={clsx('relative top-6 -translate-x-1/2', theActive ? 'pointer-events-auto' : 'pointer-events-none')}>
-					<div className='font-mono text-xs text-black/40'>
+					<div className='pointer-events-none absolute bottom-full font-mono text-xs text-black/40'>
 						x: {fixNumber(activePoint.x)}, y: {fixNumber(activePoint.y)}
 					</div>
 
@@ -150,6 +149,6 @@ export default function PointControls({ activePoint }: Props) {
 						</button>
 					</div>
 				</div>
-			</motion.div>
+			</div>
 		)
 }
