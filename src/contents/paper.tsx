@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction, useReducer, useState } from 'react'
 import { getTotalLength } from 'svg-path-commander'
 import DocSVG from '@/svgs/doc.svg'
 import { div } from 'motion/react-client'
-import { CanvasMode, canvasModes } from '@/consts'
+import { CanvasMode, canvasModes, MouseMode, mouseModes } from '@/consts'
 import clsx from 'clsx'
 import { writeText } from '@/lib/clipboard'
 // import JsonView from 'react18-json-view'
@@ -18,15 +18,15 @@ interface Props {
 	setPoints: Dispatch<SetStateAction<Point[]>>
 	totalLength: number
 	staticize: Function
-	mode: CanvasMode
-	setMode: Dispatch<SetStateAction<CanvasMode>>
-	addable: boolean
-	setAddable: Dispatch<SetStateAction<boolean>>
+	canvasMode: CanvasMode
+	setCanvasMode: Dispatch<SetStateAction<CanvasMode>>
+	mouseMode: MouseMode
+	setMouseMode: Dispatch<SetStateAction<MouseMode>>
 }
 
 let copyTimer: any = null
 
-export default function Paper({ points, d, staticize, totalLength, setPoints, mode, setMode, addable, setAddable }: Props) {
+export default function Paper({ points, d, staticize, totalLength, setPoints, canvasMode, setCanvasMode, mouseMode, setMouseMode }: Props) {
 	const active = points.length > 0
 	const [open, triggerOpen] = useReducer(s => !s, true)
 	const [copied, setCopied] = useState(false)
@@ -122,26 +122,29 @@ export default function Paper({ points, d, staticize, totalLength, setPoints, mo
 							<li>
 								<div className='flex gap-3'>
 									<div>
-										<div>Canvas mode :</div>
-										<div className='mt-1 flex gap-1.5'>
-											<ul className='flex items-center divide-x overflow-hidden rounded border text-secondary'>
-												{canvasModes.map(item => (
-													<li onClick={() => setMode(item)} className={clsx('cursor-pointer px-2 py-1', item === mode && 'bg-brand/10 text-brand')} key={item}>
-														{item}
-													</li>
-												))}
-											</ul>
-										</div>
+										<div>Canvas canvasMode :</div>
+										<ul className='mt-1 flex items-center divide-x overflow-hidden rounded border text-secondary'>
+											{canvasModes.map(item => (
+												<li
+													onClick={() => setCanvasMode(item)}
+													className={clsx('cursor-pointer px-2 py-1', item === canvasMode && 'bg-brand/10 text-brand')}
+													key={item}>
+													{item}
+												</li>
+											))}
+										</ul>
 									</div>
 									<div>
-										<div>New point :</div>
+										<div>Mouse mode :</div>
 										<ul className='mt-1 flex items-center divide-x overflow-hidden rounded border text-secondary'>
-											<li onClick={() => setAddable(true)} className={clsx('cursor-pointer px-2 py-1', addable && 'bg-brand/10 text-brand')}>
-												Yes
-											</li>
-											<li onClick={() => setAddable(false)} className={clsx('cursor-pointer px-2 py-1', !addable && 'bg-brand/10 text-brand')}>
-												No
-											</li>
+											{mouseModes.map(item => (
+												<li
+													onClick={() => setMouseMode(item)}
+													className={clsx('cursor-pointer px-2 py-1', item === mouseMode && 'bg-brand/10 text-brand')}
+													key={item}>
+													{item}
+												</li>
+											))}
 										</ul>
 									</div>
 								</div>

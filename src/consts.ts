@@ -6,3 +6,6 @@
  */
 export type CanvasMode = 'normal' | 'point' | 'refine'
 export const canvasModes: CanvasMode[] = ['normal', 'point', 'refine']
+
+export type MouseMode = 'create' | 'select'
+export const mouseModes: MouseMode[] = ['create', 'select']

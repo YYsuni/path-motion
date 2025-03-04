@@ -13,28 +13,33 @@ import ArrowHeadSVG from '@/svgs/arrowhead.svg'
 import ClosePath from '@/contents/buttons/close-path'
 import { getTotalLength } from 'svg-path-commander'
 import { debounceSave, getLocalMeta, getLocalPoints } from '@/lib/storage'
-import { CanvasMode } from '@/consts'
+import { CanvasMode, MouseMode } from '@/consts'
 
 const store = {
 	points: [] as Point[],
-	creatingPoint: null as Point | null,
 	closedPath: false,
 	d: '',
 	totalLength: 0,
-	mode: 'normal' as CanvasMode,
-	addable: true
+
+	canvasMode: 'normal' as CanvasMode,
+
+	mouseMode: 'create' as MouseMode,
+	creatingPoint: null as Point | null,
+	selectStart: null as { x: number; y: number } | null
 }
 
 export default function Home() {
 	const [init, setInit] = useState(false)
 	const [[screenWidth, screenHeight], setScreenSize] = useState([0, 0])
+	const [mouseDown, setMouseDown] = useState(false)
 
-	// Canvas mode
-	const [mode, setMode] = useState<CanvasMode>('normal')
-	const [addable, setAddable] = useState(true)
-	store.mode = mode
-	store.addable = addable
+	// Canvas canvasMode
+	const [canvasMode, setCanvasMode] = useState<CanvasMode>('normal')
+	const [mouseMode, setMouseMode] = useState<MouseMode>('create')
+	store.canvasMode = canvasMode
+	store.mouseMode = mouseMode
 
+	// Points
 	const [points, setPoints] = useState<Point[]>([])
 	store.points = points
 	const staticize = useCallback(() => {
@@ -49,13 +54,29 @@ export default function Home() {
 	store.closedPath = closedPath
 	const endPoint = points.length > 2 && closedPath ? points[0] : points[points.length - 1]
 
+	// Path d
 	const d = pointsToPath(points, closedPath)
 	const totalLength = getTotalLength(d)
 	store.d = d
 	store.totalLength = totalLength
 
+	// Select
+	const [selectedRect, setSelectedRect] = useState<{ x: number; y: number }[] | null>(null)
+	const betterSelectedRect = selectedRect
+		? [
+				{ x: Math.min(selectedRect[0].x, selectedRect[1].x), y: Math.min(selectedRect[0].y, selectedRect[1].y) },
+				{ x: Math.max(selectedRect[0].x, selectedRect[1].x), y: Math.max(selectedRect[0].y, selectedRect[1].y) }
+			]
+		: null
+
 	useEffect(() => {
 		setInit(true)
+
+		// Init points from local storage
+		const localPoints = getLocalPoints(setPoints, store)
+		if (localPoints) setPoints(localPoints)
+		const localMeta = getLocalMeta()
+		if (localMeta) triggerClosedPath()
 
 		// Screen resize
 		const reszieHandle = () => {
@@ -64,34 +85,42 @@ export default function Home() {
 		reszieHandle()
 		window.addEventListener('resize', reszieHandle)
 
-		// Init points from local storage
-		const localPoints = getLocalPoints(setPoints, store)
-		if (localPoints) setPoints(localPoints)
-		const localMeta = getLocalMeta()
-		if (localMeta) triggerClosedPath()
-
 		// Events handling
 
-		const mouceDownHandle = (e: MouseEvent) => {
+		const mouseDownHandle = (e: MouseEvent) => {
 			if (e.which !== 1) return
-			if (!store.addable && store.points?.length > 1) return
 
-			const point = new Point({ x: e.pageX, y: e.pageY, setPoints, pointsStore: store })
-			setPoints(state => {
-				state.forEach(item => (item.active = false))
-				return [...state, point]
-			})
+			setMouseDown(true)
 
-			store.creatingPoint = point
+			if (store.mouseMode === 'create' || store.points.length <= 0) {
+				const point = new Point({ x: e.pageX, y: e.pageY, setPoints, pointsStore: store })
+				setPoints(state => {
+					state.forEach(item => (item.active = false))
+					return [...state, point]
+				})
+
+				store.creatingPoint = point
+			} else {
+				store.selectStart = {
+					x: e.pageX,
+					y: e.pageY
+				}
+			}
+		}
+		const mouseDownHandleCapture = (e: MouseEvent) => {
+			setSelectedRect(null)
 		}
 
-		const mouceUpHandle = () => {
+		const mouseUpHandle = () => {
 			store.creatingPoint = null
+			store.selectStart = null
+			setMouseDown(false)
 		}
 
 		const MIN_OFFSET = 5
 		const mounceMoveHandle = (e: MouseEvent) => {
 			const creatingPoint = store.creatingPoint
+			const seletStart = store.selectStart
 			if (creatingPoint) {
 				if (Math.abs(e.x - creatingPoint.x) < MIN_OFFSET && Math.abs(e.y - creatingPoint.y) < MIN_OFFSET) return
 
@@ -107,23 +136,31 @@ export default function Home() {
 				creatingPoint.postControlPoint.y = e.y
 				creatingPoint.syncPreControlPoint()
 				creatingPoint.activate()
+			} else if (seletStart) {
+				const endPosition = { x: e.x, y: e.y }
+
+				if (Math.abs(endPosition.x - seletStart.x) < 5 || Math.abs(endPosition.y - seletStart.y) < 5) return
+
+				setSelectedRect([seletStart, endPosition])
 			}
 		}
 
-		window.addEventListener('mousedown', mouceDownHandle)
-		window.addEventListener('mouseup', mouceUpHandle)
+		window.addEventListener('mousedown', mouseDownHandle)
+		window.addEventListener('mousedown', mouseDownHandleCapture, { capture: true })
+		window.addEventListener('mouseup', mouseUpHandle)
 		window.addEventListener('mousemove', mounceMoveHandle)
 
 		return () => {
 			window.removeEventListener('resize', reszieHandle)
 
-			window.removeEventListener('mousedown', mouceDownHandle)
-			window.removeEventListener('mouseup', mouceUpHandle)
+			window.removeEventListener('mousedown', mouseDownHandle)
+			window.removeEventListener('mousedown', mouseDownHandleCapture, { capture: true })
+			window.removeEventListener('mouseup', mouseUpHandle)
 			window.removeEventListener('mousemove', mounceMoveHandle)
 		}
 	}, [])
 	useEffect(() => {
-		if (points.length === 0) setAddable(true)
+		if (points.length === 0) setMouseMode('create')
 
 		debounceSave(points, closedPath)
 	}, [points, closedPath])
@@ -154,9 +191,20 @@ export default function Home() {
 						<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
 
 						{points.map((item, index) => (
-							<PointComponent key={item.uid} point={item} mode={mode} />
+							<PointComponent key={item.uid} point={item} canvasMode={canvasMode} betterSelectedRect={betterSelectedRect} />
 						))}
 					</svg>
+
+					{betterSelectedRect && mouseDown && (
+						<div
+							className='fixed border-[1.5px] border-gray-800 bg-gray-900/20'
+							style={{
+								left: betterSelectedRect[0].x,
+								top: betterSelectedRect[0].y,
+								width: betterSelectedRect[1].x - betterSelectedRect[0].x,
+								height: betterSelectedRect[1].y - betterSelectedRect[0].y
+							}}></div>
+					)}
 				</>
 			)}
 
@@ -166,10 +214,10 @@ export default function Home() {
 				setPoints={setPoints}
 				staticize={staticize}
 				totalLength={totalLength}
-				mode={mode}
-				setMode={setMode}
-				addable={addable}
-				setAddable={setAddable}
+				canvasMode={canvasMode}
+				setCanvasMode={setCanvasMode}
+				mouseMode={mouseMode}
+				setMouseMode={setMouseMode}
 			/>
 
 			<Buttons staticize={staticize}>

@@ -1,5 +1,6 @@
 import { CanvasMode } from '@/consts'
 import { Point } from '@/lib/point'
+import { isBetween } from '@/lib/utils'
 import { dispatchEvent } from '@/lib/window-event'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
@@ -13,15 +14,28 @@ const store = {
 
 interface Props {
 	point: Point
-	mode: CanvasMode
+	canvasMode: CanvasMode
+	betterSelectedRect: { x: number; y: number }[] | null
 }
 
-export default function PointComponent({ point, mode }: Props) {
+export default function PointComponent({ point, canvasMode, betterSelectedRect }: Props) {
 	const [active, setActive] = useState(false)
 	const theActive = active || point.active
+	const seleted =
+		betterSelectedRect &&
+		isBetween(point.x, betterSelectedRect[0].x, betterSelectedRect[1].x) &&
+		isBetween(point.y, betterSelectedRect[0].y, betterSelectedRect[1].y)
 
 	const animateStyle = useMemo(() => {
-		switch (`${theActive}, ${mode}`) {
+		if (seleted) {
+			return {
+				fill: 'white',
+				stroke: 'black',
+				scale: 1
+			}
+		}
+
+		switch (`${theActive}, ${canvasMode}`) {
 			case 'true, normal':
 			case 'true, point':
 			case 'false, refine':
@@ -52,11 +66,11 @@ export default function PointComponent({ point, mode }: Props) {
 					scale: 0.8
 				}
 		}
-	}, [mode, theActive])
+	}, [canvasMode, theActive, seleted])
 
 	return (
 		<>
-			{(mode === 'refine' || point.active) && point.enablePreControl && (
+			{(canvasMode === 'refine' || point.active) && point.enablePreControl && (
 				<>
 					<path d={`M${point.preControlPoint.x} ${point.preControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
@@ -83,7 +97,7 @@ export default function PointComponent({ point, mode }: Props) {
 					/>
 				</>
 			)}
-			{(mode === 'refine' || point.active) && point.enablePostControl && (
+			{(canvasMode === 'refine' || point.active) && point.enablePostControl && (
 				<>
 					<path d={`M${point.postControlPoint.x} ${point.postControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle

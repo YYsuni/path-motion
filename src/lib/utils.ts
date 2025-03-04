@@ -34,3 +34,7 @@ export function pointsToPath(points: Point[], closedPath?: boolean): string {
 export function fixNumber(value: string | number, decimals = 2) {
 	return +Number(value).toFixed(decimals)
 }
+
+export function isBetween(num: number, start: number, end: number) {
+	return num >= start && num <= end
+}
