@@ -211,7 +211,7 @@ export default function Home() {
 					<svg viewBox={`0 0 ${screenWidth} ${screenHeight}`} fill='none' className='relative h-full w-full select-none' xmlns='http://www.w3.org/2000/svg'>
 						<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
 
-						{points.map((item, index) => (
+						{points.map(item => (
 							<PointComponent key={item.uid} point={item} canvasMode={canvasMode} betterSelectedRect={betterSelectedRect} />
 						))}
 					</svg>

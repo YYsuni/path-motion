@@ -71,10 +71,8 @@ export default function Paper({ points, d, staticize, totalLength, setPoints, ca
 									<button
 										onClick={() => {
 											points.forEach(item => {
-												if (!item.enablePreControl) {
-													item.enablePreControl = true
-													item.initPreControlPoint()
-												}
+												item.enablePreControl = true
+												item.initPreControlPoint()
 												item.enablePostControl = true
 												item.enableControlWeld = true
 												item.enableControlEqual = true

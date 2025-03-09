@@ -155,15 +155,9 @@ export class Point {
 	}
 
 	getAngle() {
-		let lastPath = ''
-		const points = this.points
+		if (this.points.length < 2) return 0
 
-		if (this.pointsStore.closedPath && this.index) {
-			lastPath = pointsToPath([points[points.length - 1], points[0]])
-		} else {
-			if (points.length < 2) return 0
-			lastPath = pointsToPath(points.slice(-2))
-		}
+		const lastPath = pointsToPath([this.getPrePoint(), this])
 
 		const pathLength = getTotalLength(lastPath)
 		const prePoint = getPointAtLength(lastPath, pathLength - 1)
