@@ -28,6 +28,11 @@ const store = {
 	selectStart: null as { x: number; y: number } | null
 }
 
+const ORIGIN_RADIUS = 10000
+const ORIGIN_WIDTH = 1
+const ORIGIN_COLOR = '#6666'
+let originTimer: NodeJS.Timeout | undefined
+
 export default function Home() {
 	const [init, setInit] = useState(false)
 	const [[screenWidth, screenHeight], setScreenSize] = useState([0, 0])
@@ -38,6 +43,16 @@ export default function Home() {
 	const [mouseMode, setMouseMode] = useState<MouseMode>('create')
 	store.canvasMode = canvasMode
 	store.mouseMode = mouseMode
+
+	// Coordinate origin
+	const [origin, setOrigin] = useState([0, 0])
+	const [showOrigin, setShowOrigin] = useState(false)
+	useEffect(() => {
+		setShowOrigin(true)
+
+		clearTimeout(originTimer)
+		originTimer = setTimeout(() => setShowOrigin(false), 3000)
+	}, [origin])
 
 	// Points
 	const [points, setPoints] = useState<Point[]>([])
@@ -209,6 +224,28 @@ export default function Home() {
 					)}
 
 					<svg viewBox={`0 0 ${screenWidth} ${screenHeight}`} fill='none' className='relative h-full w-full select-none' xmlns='http://www.w3.org/2000/svg'>
+						{showOrigin && (
+							<>
+								<rect
+									x={origin[0] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2}
+									y={origin[1] - ORIGIN_WIDTH / 2}
+									width={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
+									height={ORIGIN_WIDTH}
+									fill={ORIGIN_COLOR}
+								/>
+								<rect
+									x={origin[0] - ORIGIN_WIDTH / 2}
+									y={origin[1] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2}
+									width={ORIGIN_WIDTH}
+									height={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
+									fill={ORIGIN_COLOR}
+								/>
+							</>
+						)}
+						<text x={origin[0] + 5} y={origin[1] - 5} className='text-black/40' fill='currentColor' fontSize={10}>
+							(0, 0)
+						</text>
+
 						<path d={d} stroke='hsl(0 0% 20%)' strokeWidth={3} strokeLinejoin='round' />
 
 						{points.map(item => (
@@ -233,12 +270,15 @@ export default function Home() {
 				d={d}
 				points={points}
 				setPoints={setPoints}
+				closedPath={closedPath}
 				staticize={staticize}
 				totalLength={totalLength}
 				canvasMode={canvasMode}
 				setCanvasMode={setCanvasMode}
 				mouseMode={mouseMode}
 				setMouseMode={setMouseMode}
+				origin={origin}
+				setOrigin={setOrigin}
 			/>
 
 			<Buttons staticize={staticize}>

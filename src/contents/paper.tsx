@@ -1,6 +1,6 @@
 import HighlightPathD from '@/components/highlight-path-d'
 import { Point } from '@/lib/point'
-import { fixNumber } from '@/lib/utils'
+import { fixNumber, pointsToPath } from '@/lib/utils'
 import { motion } from 'motion/react'
 import { Dispatch, SetStateAction, useReducer, useState } from 'react'
 import { getTotalLength } from 'svg-path-commander'
@@ -16,22 +16,42 @@ interface Props {
 	d: string
 	points: Point[]
 	setPoints: Dispatch<SetStateAction<Point[]>>
+	closedPath: boolean
 	totalLength: number
 	staticize: Function
 	canvasMode: CanvasMode
 	setCanvasMode: Dispatch<SetStateAction<CanvasMode>>
 	mouseMode: MouseMode
 	setMouseMode: Dispatch<SetStateAction<MouseMode>>
+
+	origin: number[]
+	setOrigin: Dispatch<SetStateAction<number[]>>
 }
 
 let copyTimer: any = null
 
-export default function Paper({ points, d, staticize, totalLength, setPoints, canvasMode, setCanvasMode, mouseMode, setMouseMode }: Props) {
-	const active = points.length > 0
+export default function Paper({
+	points,
+	d,
+	staticize,
+	closedPath,
+	totalLength,
+	setPoints,
+	canvasMode,
+	setCanvasMode,
+	mouseMode,
+	setMouseMode,
+	origin,
+	setOrigin
+}: Props) {
 	const [open, triggerOpen] = useReducer(s => !s, true)
 	const [copied, setCopied] = useState(false)
 
-	if (active)
+	const [originIndex, setOriginIndex] = useState(-1)
+
+	if (points.length > 0) {
+		const theD = origin[0] != 0 || origin[1] != 0 ? pointsToPath(points, closedPath, origin) : d
+
 		return (
 			<div
 				className='fixed bottom-8 left-8'
@@ -47,10 +67,57 @@ export default function Paper({ points, d, staticize, totalLength, setPoints, ca
 						<ul className='space-y-3'>
 							<li>
 								<div>
+									Coordinate origin :{' '}
+									<span className='font-mono text-secondary'>
+										({origin[0]}, {origin[1]})
+									</span>
+								</div>
+								<div className='mt-1 flex items-center gap-1.5'>
+									<button
+										onClick={() => {
+											setOriginIndex(-1)
+											setOrigin([0, 0])
+										}}
+										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+										Left-Top
+									</button>
+									<button
+										onClick={() => setOrigin([points[0].x, points[0].y])}
+										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+										First
+									</button>
+									<button
+										onClick={() => {
+											const index = originIndex < 0 ? 0 : originIndex === 0 ? points.length - 1 : (originIndex - 1) % points.length
+											setOriginIndex(index)
+											setOrigin([points[index].x, points[index].y])
+										}}
+										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+										Prev
+									</button>
+									<button
+										onClick={() => {
+											const index = originIndex < 0 ? 0 : (originIndex + 1) % points.length
+											setOriginIndex(index)
+											setOrigin([points[index].x, points[index].y])
+										}}
+										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+										Next
+									</button>
+									<button
+										onClick={() => setOrigin([points[points.length - 1].x, points[points.length - 1].y])}
+										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+										Last
+									</button>
+								</div>
+							</li>
+
+							<li>
+								<div>
 									Path <span className='rounded bg-gray-100 px-1 font-mono'>d</span> :
 								</div>
 								<div className='mt-1 break-all rounded-md bg-gray-100 p-3 font-mono text-xs text-secondary'>
-									<HighlightPathD d={d} />
+									<HighlightPathD d={theD} />
 								</div>
 								<div className='mt-1 flex items-center gap-1.5'>
 									<button
@@ -153,4 +220,5 @@ export default function Paper({ points, d, staticize, totalLength, setPoints, ca
 				</button>
 			</div>
 		)
+	}
 }

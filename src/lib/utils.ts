@@ -1,7 +1,28 @@
 import { Point } from './point'
+import Decimal from 'decimal.js'
 
-export function pointsToPath(points: Point[], closedPath?: boolean): string {
+export function pointsToPath(points: Point[], closedPath?: boolean, origin = [0, 0]): string {
 	if (points.length == 0) return ''
+
+	if (origin[0] != 0 || origin != origin) {
+		points = points.map(item => {
+			const p = new Point({
+				x: minus(item.x, origin[0]),
+				y: minus(item.y, origin[1]),
+				setPoints: () => {},
+				pointsStore: {}
+			})
+
+			p.preControlPoint.x = minus(item.preControlPoint.x, origin[0])
+			p.preControlPoint.y = minus(item.preControlPoint.y, origin[1])
+			p.postControlPoint.x = minus(item.postControlPoint.x, origin[0])
+			p.postControlPoint.y = minus(item.postControlPoint.y, origin[1])
+			p.enablePostControl = item.enablePostControl
+			p.enablePreControl = item.enablePreControl
+
+			return p
+		})
+	}
 
 	if (closedPath) {
 		points = points.concat(points[0])
@@ -29,6 +50,10 @@ export function pointsToPath(points: Point[], closedPath?: boolean): string {
 	}
 
 	return d
+}
+
+function minus(a: number, b: number) {
+	return new Decimal(a).minus(b).toNumber()
 }
 
 export function fixNumber(value: string | number, decimals = 2) {
