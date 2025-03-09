@@ -17,8 +17,6 @@ export class Point {
 	enableControlWeld = false
 	enableControlEqual = false
 
-	static ControlLength = 40
-
 	pointsStore = {
 		points: [] as Point[],
 		closedPath: false
@@ -41,37 +39,46 @@ export class Point {
 		})
 	}
 
-	getIndex() {
+	get index() {
 		return this.pointsStore.points.findIndex(item => item.uid == this.uid)
 	}
-	getPoints() {
+
+	get points() {
 		return this.pointsStore.points
 	}
 
 	getPrePoint() {
-		const index = this.getIndex()
+		const index = this.index
 		if (index > 0) return this.pointsStore.points[index - 1]
+		else return this.pointsStore.points[this.pointsStore.points.length - 1]
 	}
 	getPostPoint() {
-		const index = this.getIndex()
+		const index = this.index
 		if (index < this.pointsStore.points.length - 1) return this.pointsStore.points[index + 1]
+		else return this.pointsStore.points[0]
 	}
 	initPreControlPoint() {
 		const prePoint = this.getPrePoint()
+		const postPoint = this.getPostPoint()
 		let xDiff = 0
 		let yDiff = 0
 
-		if (prePoint) {
+		if (this.points.length >= 3) {
+			const postPoint = this.getPostPoint()
+			xDiff = prePoint.x - postPoint.x
+			yDiff = prePoint.y - postPoint.y
+		} else if (prePoint) {
 			xDiff = prePoint.x - this.x
 			yDiff = prePoint.y - this.y
-		} else {
-			xDiff = -Point.ControlLength
 		}
 
 		const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+
 		if (!distance) return
 
-		const controlLength = Math.min(Point.ControlLength, distance - 10)
+		const preLength = Math.sqrt((this.x - prePoint.x) ** 2 + (this.y - prePoint.y) ** 2)
+		const postLength = Math.sqrt((this.x - postPoint.x) ** 2 + (this.y - postPoint.y) ** 2)
+		const controlLength = Math.min(preLength / 3, postLength / 3)
 		const ratio = controlLength / distance
 
 		this.preControlPoint.x = xDiff * ratio + this.x
@@ -79,20 +86,24 @@ export class Point {
 	}
 	initPostControlPoint() {
 		const postPoint = this.getPostPoint()
+		const prePoint = this.getPrePoint()
 		let xDiff = 0
 		let yDiff = 0
 
-		if (postPoint) {
+		if (this.points.length >= 3) {
+			xDiff = postPoint.x - postPoint.x
+			yDiff = postPoint.y - postPoint.y
+		} else if (postPoint) {
 			xDiff = postPoint.x - this.x
 			yDiff = postPoint.y - this.y
-		} else {
-			xDiff = Point.ControlLength
 		}
 
 		const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
 		if (!distance) return
 
-		const controlLength = Math.min(Point.ControlLength, distance - 10)
+		const preLength = Math.sqrt((this.x - prePoint.x) ** 2 + (this.y - prePoint.y) ** 2)
+		const postLength = Math.sqrt((this.x - postPoint.x) ** 2 + (this.y - postPoint.y) ** 2)
+		const controlLength = Math.min(preLength / 3, postLength / 3)
 		const ratio = controlLength / distance
 
 		this.postControlPoint.x = xDiff * ratio + this.x
@@ -136,7 +147,7 @@ export class Point {
 	}
 
 	deleteSelf() {
-		const index = this.getIndex()
+		const index = this.index
 		if (index > -1) {
 			this.pointsStore.points.splice(index, 1)
 			this.setPoints(s => [...s])
@@ -145,9 +156,9 @@ export class Point {
 
 	getAngle() {
 		let lastPath = ''
-		const points = this.getPoints()
+		const points = this.points
 
-		if (this.pointsStore.closedPath && this.getIndex() == 0) {
+		if (this.pointsStore.closedPath && this.index) {
 			lastPath = pointsToPath([points[points.length - 1], points[0]])
 		} else {
 			if (points.length < 2) return 0

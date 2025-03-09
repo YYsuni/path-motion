@@ -75,10 +75,7 @@ export default function Paper({ points, d, staticize, totalLength, setPoints, ca
 													item.enablePreControl = true
 													item.initPreControlPoint()
 												}
-												if (!item.enablePostControl) {
-													item.enablePostControl = true
-													item.initPostControlPoint()
-												}
+												item.enablePostControl = true
 												item.enableControlWeld = true
 												item.enableControlEqual = true
 												item.syncPostControlPoint()
