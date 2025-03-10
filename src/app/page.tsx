@@ -15,6 +15,7 @@ import { getTotalLength } from 'svg-path-commander'
 import { debounceSave, getLocalMeta, getLocalPoints, getStorage, setStorage } from '@/lib/storage'
 import { CanvasMode, MouseMode } from '@/consts'
 import { motion } from 'motion/react'
+import GithubSVG from '@/svgs/github.svg'
 
 const store = {
 	points: [] as Point[],
@@ -310,7 +311,15 @@ export default function Home() {
 				<Run pointsStore={store} />
 			</Buttons>
 
-			<PointControls activePoint={activePoint} />
+			<a
+				className='fixed right-4 top-4 rounded-full p-1 hover:bg-gray-300'
+				onMouseDown={staticize}
+				href='https://github.com/YYsuni/path-motion'
+				target='_blank'>
+				<GithubSVG className='h-5 w-5' />
+			</a>
+
+			<PointControls activePoint={activePoint} origin={origin} />
 		</div>
 	)
 }

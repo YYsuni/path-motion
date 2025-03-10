@@ -15,9 +15,10 @@ import { fixNumber } from '@/lib/utils'
 
 interface Props {
 	activePoint?: Point
+	origin: number[]
 }
 
-export default function PointControls({ activePoint }: Props) {
+export default function PointControls({ activePoint, origin }: Props) {
 	const [active, setActive] = useState(true)
 
 	const theActive = activePoint && active
@@ -35,7 +36,7 @@ export default function PointControls({ activePoint }: Props) {
 					onMouseDown={e => e.stopPropagation()}
 					className={clsx('relative top-6 -translate-x-1/2', theActive ? 'pointer-events-auto' : 'pointer-events-none')}>
 					<div className='pointer-events-none absolute bottom-full font-mono text-xs text-black/40'>
-						x: {fixNumber(activePoint.x)}, y: {fixNumber(activePoint.y)}
+						x: {fixNumber(activePoint.x - origin[0])}, y: {fixNumber(activePoint.y - origin[1])}
 					</div>
 
 					<div className='flex items-center gap-1 rounded-lg bg-white p-2 shadow-md'>
