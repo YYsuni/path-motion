@@ -64,7 +64,10 @@ export default function Home() {
 		store.points.forEach(item => (item.active = false))
 		setPoints([...store.points])
 	}, [])
-	const clear = useCallback(() => setPoints([]), [])
+	const clear = useCallback(() => {
+		setPoints([])
+		setMouseMode('create')
+	}, [])
 
 	const activePoint = points.find(item => item.active)
 
