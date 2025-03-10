@@ -222,7 +222,7 @@ export default function Paper({
 										onClick={() => {
 											clearTimeout(copyTimer)
 
-											writeText(d)
+											writeText(theD)
 											setCopied(true)
 
 											copyTimer = setTimeout(() => setCopied(false), 3000)
