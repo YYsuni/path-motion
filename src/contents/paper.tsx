@@ -26,6 +26,10 @@ interface Props {
 
 	origin: number[]
 	setOrigin: Dispatch<SetStateAction<number[]>>
+
+	canvasWidth: number
+	canvasHeight: number
+	setCanvasSize: Dispatch<SetStateAction<[number, number]>>
 }
 
 let copyTimer: any = null
@@ -42,7 +46,10 @@ export default function Paper({
 	mouseMode,
 	setMouseMode,
 	origin,
-	setOrigin
+	setOrigin,
+	canvasWidth,
+	canvasHeight,
+	setCanvasSize
 }: Props) {
 	const [open, triggerOpen] = useReducer(s => !s, true)
 	const [copied, setCopied] = useState(false)
@@ -66,49 +73,98 @@ export default function Paper({
 						className='pointer-events-auto w-[400px] origin-bottom-left rounded-lg bg-white/80 p-6 pb-10 text-xs shadow-md backdrop-blur'>
 						<ul className='space-y-3'>
 							<li>
+								<div>Canvas size : </div>
+								<div className='mt-1 flex items-center gap-1.5'>
+									<input
+										className='w-[80px] rounded border px-2 py-1 font-mono focus-visible:border-gray-400 focus-visible:outline-none'
+										value={canvasWidth}
+										type='number'
+										step='1'
+										onInput={e => {
+											const value = +(e.target as any).value
+											setCanvasSize(([w, h]) => [value, h])
+										}}
+									/>
+									<span className='text-secondary'>x</span>
+
+									<input
+										className='w-[80px] rounded border px-2 py-1 font-mono focus-visible:border-gray-400 focus-visible:outline-none'
+										value={canvasHeight}
+										type='number'
+										step='1'
+										onInput={e => {
+											const value = +(e.target as any).value
+											setCanvasSize(([w, h]) => [w, value])
+										}}
+									/>
+								</div>
+							</li>
+
+							<li>
 								<div>
 									Coordinate origin :{' '}
 									<span className='font-mono text-secondary'>
 										({origin[0]}, {origin[1]})
 									</span>
 								</div>
-								<div className='mt-1 flex items-center gap-1.5'>
-									<button
-										onClick={() => {
-											setOriginIndex(-1)
-											setOrigin([0, 0])
-										}}
-										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
-										Left-Top
-									</button>
-									<button
-										onClick={() => setOrigin([points[0].x, points[0].y])}
-										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
-										First
-									</button>
-									<button
-										onClick={() => {
-											const index = originIndex < 0 ? 0 : originIndex === 0 ? points.length - 1 : (originIndex - 1) % points.length
-											setOriginIndex(index)
-											setOrigin([points[index].x, points[index].y])
-										}}
-										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
-										Prev
-									</button>
-									<button
-										onClick={() => {
-											const index = originIndex < 0 ? 0 : (originIndex + 1) % points.length
-											setOriginIndex(index)
-											setOrigin([points[index].x, points[index].y])
-										}}
-										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
-										Next
-									</button>
-									<button
-										onClick={() => setOrigin([points[points.length - 1].x, points[points.length - 1].y])}
-										className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
-										Last
-									</button>
+
+								<div className='mt-1'>
+									<div className='flex items-center gap-1.5'>
+										<span className='text-secondary'>Layout :</span>
+
+										<button
+											onClick={() => {
+												setOriginIndex(-2)
+												setOrigin([0, 0])
+											}}
+											className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+											Screen Left-Top
+										</button>
+										<button
+											onClick={() => {
+												const canvasElement = document.getElementById('canvas')
+												if (canvasElement) {
+													const { left, top } = canvasElement.getBoundingClientRect()
+
+													setOriginIndex(-1)
+													setOrigin([fixNumber(left), fixNumber(top)])
+												}
+											}}
+											className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+											Canvas Left-Top
+										</button>
+									</div>
+									<div className='mt-1 flex items-center gap-1.5'>
+										<span className='text-secondary'>Point :</span>
+										<button
+											onClick={() => setOrigin([points[0].x, points[0].y])}
+											className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+											First
+										</button>
+										<button
+											onClick={() => {
+												const index = originIndex < 0 ? 0 : originIndex === 0 ? points.length - 1 : (originIndex - 1) % points.length
+												setOriginIndex(index)
+												setOrigin([points[index].x, points[index].y])
+											}}
+											className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+											Prev
+										</button>
+										<button
+											onClick={() => {
+												const index = originIndex < 0 ? 0 : (originIndex + 1) % points.length
+												setOriginIndex(index)
+												setOrigin([points[index].x, points[index].y])
+											}}
+											className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+											Next
+										</button>
+										<button
+											onClick={() => setOrigin([points[points.length - 1].x, points[points.length - 1].y])}
+											className='rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'>
+											Last
+										</button>
+									</div>
 								</div>
 							</li>
 
@@ -116,7 +172,7 @@ export default function Paper({
 								<div>
 									Path <span className='rounded bg-gray-100 px-1 font-mono'>d</span> :
 								</div>
-								<div className='mt-1 break-all rounded-md bg-gray-100 p-3 font-mono text-xs text-secondary'>
+								<div className='mt-1 max-h-[240px] overflow-auto break-all rounded-md bg-gray-100 p-3 font-mono text-xs text-secondary'>
 									<HighlightPathD d={theD} />
 								</div>
 								<div className='mt-1 flex items-center gap-1.5'>

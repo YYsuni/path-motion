@@ -14,6 +14,7 @@ import ClosePath from '@/contents/buttons/close-path'
 import { getTotalLength } from 'svg-path-commander'
 import { debounceSave, getLocalMeta, getLocalPoints, getStorage, setStorage } from '@/lib/storage'
 import { CanvasMode, MouseMode } from '@/consts'
+import { motion } from 'motion/react'
 
 const store = {
 	points: [] as Point[],
@@ -36,6 +37,7 @@ let originTimer: NodeJS.Timeout | undefined
 export default function Home() {
 	const [init, setInit] = useState(false)
 	const [[screenWidth, screenHeight], setScreenSize] = useState([0, 0])
+	const [[canvasWidth, canvasHeight], setCanvasSize] = useState([0, 0])
 	const [mouseDown, setMouseDown] = useState(false)
 
 	// Canvas canvasMode
@@ -98,6 +100,11 @@ export default function Home() {
 		const localMouseMode = getStorage('mouseMode')
 		if (localCanvasMode) setCanvasMode(localCanvasMode as any)
 		if (localMouseMode) setMouseMode(localMouseMode as any)
+
+		// Init canvas sizes from local storage
+		const cw = getStorage('canvas-width')!
+		const ch = getStorage('canvas-height')!
+		if (+cw || +ch) setCanvasSize([+cw || 0, +ch || 0])
 
 		// Screen resize
 		const reszieHandle = () => {
@@ -187,10 +194,14 @@ export default function Home() {
 		setStorage('canvasMode', canvasMode)
 		setStorage('mouseMode', mouseMode)
 	}, [canvasMode, mouseMode])
+	useEffect(() => {
+		setStorage('canvas-width', String(canvasWidth))
+		setStorage('canvas-height', String(canvasHeight))
+	}, [canvasHeight, canvasWidth])
 
 	return (
 		<div
-			className='relative h-screen w-screen overflow-hidden focus-visible:outline-none'
+			className='relative flex h-screen w-screen items-center justify-center overflow-hidden focus-visible:outline-none'
 			tabIndex={1}
 			onKeyDown={e => {
 				if (e.key === 'Delete' || e.code === 'Backspace') {
@@ -206,6 +217,13 @@ export default function Home() {
 					}
 				}
 			}}>
+			{!!canvasWidth && !!canvasHeight && (
+				<motion.div
+					id='canvas'
+					className='pointer-events-none absolute border border-black/60 bg-white/80'
+					animate={{ width: canvasWidth, height: canvasHeight }}></motion.div>
+			)}
+
 			{init && (
 				<>
 					<div className='pointer-events-none fixed bottom-1 right-1 font-mono text-xs text-gray-400'>
@@ -214,7 +232,7 @@ export default function Home() {
 
 					{points.length > 1 && (
 						<ArrowHeadSVG
-							className='fixed z-[-1] w-8 origin-top'
+							className='pointer-events-none fixed w-8 origin-top'
 							style={{
 								left: endPoint.x - 16,
 								top: endPoint.y,
@@ -279,6 +297,9 @@ export default function Home() {
 				setMouseMode={setMouseMode}
 				origin={origin}
 				setOrigin={setOrigin}
+				canvasWidth={canvasWidth}
+				canvasHeight={canvasHeight}
+				setCanvasSize={setCanvasSize}
 			/>
 
 			<Buttons staticize={staticize}>
