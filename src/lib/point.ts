@@ -3,6 +3,10 @@ import { uid } from 'uid'
 import { pointsToPath } from './utils'
 import { getPointAtLength, getTotalLength } from 'svg-path-commander'
 
+function setPointsError() {
+	throw 'NULL SETPOINTS'
+}
+
 export class Point {
 	uid: string
 	x: number
@@ -22,12 +26,13 @@ export class Point {
 		closedPath: false
 	}
 
-	constructor({ x, y, setPoints, pointsStore }: { x: number; y: number; setPoints: Dispatch<SetStateAction<Point[]>>; pointsStore: any }) {
+	constructor({ x, y, setPoints, pointsStore }: { x: number; y: number; setPoints?: Dispatch<SetStateAction<Point[]>>; pointsStore?: any }) {
 		this.uid = uid()
 
 		this.x = x
 		this.y = y
-		this.setPoints = setPoints
+		if (setPoints) this.setPoints = setPoints
+		else this.setPoints = setPointsError
 		this.pointsStore = pointsStore
 	}
 
