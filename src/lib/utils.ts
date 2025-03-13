@@ -74,23 +74,28 @@ export function pathToPoints(d: string) {
 	const arr: string[][] = letterArr.map((item, i) => [item, ...numberArr[i]])
 
 	const points = arr.map((item, index) => {
-		const point = new Point({ x: +item[1], y: +item[2] })
+		let point: Point
+		if (item[0] === 'M' || item[0] === 'L') {
+			point = new Point({ x: +item[1] || 0, y: +item[2] || 0 })
+		} else {
+			point = new Point({ x: +item[5] || 0, y: +item[6] || 0 })
+		}
 
 		if (item[0] === 'C') {
-			point.enablePostControl = true
-			point.postControlPoint.x = +item[3] || 0
-			point.postControlPoint.y = +item[4] || 0
-		}
-		if (index > 0 && arr[index - 1][0] === 'C') {
 			point.enablePreControl = true
-			point.preControlPoint.x = +item[5] || 0
-			point.preControlPoint.y = +item[6] || 0
+			point.preControlPoint.x = +item[3] || 0
+			point.preControlPoint.y = +item[4] || 0
+		}
+		if (index < arr.length - 1 && arr[index + 1][0] === 'C') {
+			point.enablePostControl = true
+			point.postControlPoint.x = +arr[index + 1][1] || 0
+			point.postControlPoint.y = +arr[index + 1][2] || 0
 		}
 
 		return point
 	})
 
-	return [points, isClosedPath]
+	return [points, isClosedPath] as [Point[], boolean]
 }
 
 function minus(a: number, b: number) {

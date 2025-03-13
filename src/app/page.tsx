@@ -248,16 +248,19 @@ export default function Home() {
 					<svg viewBox={`0 0 ${screenWidth} ${screenHeight}`} fill='none' className='relative h-full w-full select-none' xmlns='http://www.w3.org/2000/svg'>
 						{showOrigin && (
 							<>
-								<rect
-									x={origin[0] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2}
-									y={origin[1] - ORIGIN_WIDTH / 2}
+								<motion.rect
+									animate={{
+										x: origin[0] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2,
+										y: origin[1] - ORIGIN_WIDTH / 2
+									}}
+									transition={{ ease: 'linear' }}
 									width={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
 									height={ORIGIN_WIDTH}
 									fill={ORIGIN_COLOR}
 								/>
-								<rect
-									x={origin[0] - ORIGIN_WIDTH / 2}
-									y={origin[1] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2}
+								<motion.rect
+									animate={{ x: origin[0] - ORIGIN_WIDTH / 2, y: origin[1] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2 }}
+									transition={{ ease: 'linear' }}
 									width={ORIGIN_WIDTH}
 									height={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
 									fill={ORIGIN_COLOR}
@@ -304,6 +307,7 @@ export default function Home() {
 				canvasWidth={canvasWidth}
 				canvasHeight={canvasHeight}
 				setCanvasSize={setCanvasSize}
+				store={store}
 			/>
 
 			<Buttons staticize={staticize}>
