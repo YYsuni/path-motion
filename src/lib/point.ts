@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { uid } from 'uid'
 import { pointsToPath } from './utils'
 import { getPointAtLength, getTotalLength } from 'svg-path-commander'
+import { store } from '@/app/canvas/main'
 
 function setPointsError() {
 	throw 'NULL SETPOINTS'
@@ -12,7 +13,6 @@ export class Point {
 	x: number
 	y: number
 	active: boolean = false
-	setPoints: Dispatch<SetStateAction<Point[]>>
 
 	preControlPoint = { x: 0, y: 0 }
 	postControlPoint = { x: 0, y: 0 }
@@ -21,23 +21,15 @@ export class Point {
 	enableControlWeld = false
 	enableControlEqual = false
 
-	pointsStore = {
-		points: [] as Point[],
-		closedPath: false
-	}
-
-	constructor({ x, y, setPoints, pointsStore }: { x: number; y: number; setPoints?: Dispatch<SetStateAction<Point[]>>; pointsStore?: any }) {
+	constructor({ x, y }: { x: number; y: number }) {
 		this.uid = uid()
 
 		this.x = x
 		this.y = y
-		if (setPoints) this.setPoints = setPoints
-		else this.setPoints = setPointsError
-		this.pointsStore = pointsStore
 	}
 
 	activate() {
-		this.setPoints(state => {
+		store.setPoints(state => {
 			state.forEach(item => (item.active = false))
 			this.active = true
 			return [...state]
@@ -45,22 +37,26 @@ export class Point {
 	}
 
 	get index() {
-		return this.pointsStore.points.findIndex(item => item.uid == this.uid)
+		return store.points.findIndex(item => item.uid == this.uid)
 	}
 
 	get points() {
-		return this.pointsStore.points
+		return store.points
+	}
+
+	setPoints(points: Point[] | ((prevState: Point[]) => Point[])) {
+		store.setPoints(points)
 	}
 
 	getPrePoint() {
 		const index = this.index
-		if (index > 0) return this.pointsStore.points[index - 1]
-		else return this.pointsStore.points[this.pointsStore.points.length - 1]
+		if (index > 0) return store.points[index - 1]
+		else return store.points[store.points.length - 1]
 	}
 	getPostPoint() {
 		const index = this.index
-		if (index < this.pointsStore.points.length - 1) return this.pointsStore.points[index + 1]
-		else return this.pointsStore.points[0]
+		if (index < store.points.length - 1) return store.points[index + 1]
+		else return store.points[0]
 	}
 	initPreControlPoint() {
 		const prePoint = this.getPrePoint()
@@ -154,7 +150,7 @@ export class Point {
 	deleteSelf() {
 		const index = this.index
 		if (index > -1) {
-			this.pointsStore.points.splice(index, 1)
+			store.points.splice(index, 1)
 			this.setPoints(s => [...s])
 		}
 	}

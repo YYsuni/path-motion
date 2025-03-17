@@ -28,7 +28,7 @@ export function pointsToJSON(points: Point[]) {
 	return pointsJSON
 }
 
-export function getLocalPoints(setPoints: any, pointsStore: any): Point[] | null {
+export function getLocalPoints(): Point[] | null {
 	const str = localStorage.getItem(POINTS_LOCAL_KEY)
 	if (!str) return null
 
@@ -43,7 +43,7 @@ export function getLocalPoints(setPoints: any, pointsStore: any): Point[] | null
 	}
 
 	if (Array.isArray(pointsArr)) {
-		const points = pointsArr.map(item => new Point({ x: item[0], y: item[1], setPoints, pointsStore }))
+		const points = pointsArr.map(item => new Point({ x: item[0], y: item[1] }))
 		points.forEach((item, i) => {
 			item.preControlPoint.x = pointsArr[i][2]
 			item.preControlPoint.y = pointsArr[i][3]

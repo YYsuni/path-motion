@@ -3,38 +3,12 @@
 @tailwind utilities;
 
 html {
-	height: 100%;
 	@apply text-primary;
-}
-
-body {
-	$grid-line-color: hsl(0 0% 88%);
-	$grid-line-spacing: 16px;
-	$grid-line-width: 1px;
-
-	background-color: hsl(0 0% 95%);
-	background-repeat: repeat;
-	background-image:
-		linear-gradient(
-			to right,
-			transparent $grid-line-spacing,
-			$grid-line-color $grid-line-spacing,
-			$grid-line-color $grid-line-spacing + $grid-line-width,
-			transparent $grid-line-spacing + $grid-line-width
-		),
-		linear-gradient(
-			to bottom,
-			transparent $grid-line-spacing,
-			$grid-line-color $grid-line-spacing,
-			$grid-line-color $grid-line-spacing + $grid-line-width,
-			transparent $grid-line-spacing + $grid-line-width
-		);
-	background-size: $grid-line-spacing + $grid-line-width $grid-line-spacing + $grid-line-width;
-	height: 100%;
 }
 
 html {
 	scrollbar-width: none;
+	font-weight: 500;
 	&::-webkit-scrollbar {
 		display: none;
 	}
@@ -47,4 +21,8 @@ html {
 	*::-webkit-scrollbar {
 		display: none;
 	}
+}
+
+.pattern-bg {
+	background-image: url('/images/point.svg');
 }

@@ -9,6 +9,9 @@ export default {
 	],
 	theme: {
 		extend: {
+			fontFamily: {
+				sans: ['Poppins', 'sans-serif']
+			},
 			colors: {
 				primary: '#333',
 				secondary: '#666',
