@@ -227,7 +227,11 @@ export default function Main() {
 
 	return (
 		<div className='flex h-screen w-screen overflow-hidden'>
-			<main ref={mainRef} className='pattern-bg flex-1 overflow-hidden bg-[#F5F5F5]' tabIndex={1} onKeyDown={deleteHandle as any}>
+			<main
+				ref={mainRef}
+				className='pattern-bg relative flex flex-1 items-center justify-center overflow-hidden bg-[#F5F5F5]'
+				tabIndex={1}
+				onKeyDown={deleteHandle as any}>
 				<svg viewBox={`0 0 ${mainWidth} ${mainHeight}`} fill='none' className='relative h-full w-full select-none' xmlns='http://www.w3.org/2000/svg'>
 					{showOrigin && (
 						<>
@@ -261,6 +265,8 @@ export default function Main() {
 						<PointComponent key={item.uid} point={item} canvasMode={canvasMode} betterSelectedRect={betterSelectedRect} />
 					))}
 				</svg>
+
+				<div className='absolute bottom-4 h-12 w-[300px] rounded-full bg-white/60 shadow'></div>
 			</main>
 			<aside className='w-[300px] bg-[#F9F9F9] shadow-xl shadow-gray-200'>
 				<Aside />
