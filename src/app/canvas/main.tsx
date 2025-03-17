@@ -6,7 +6,7 @@ import { isBetween, pointsToPath } from '@/lib/utils'
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { getTotalLength } from 'svg-path-commander'
 import Aside from './aside'
-import { getLocalMeta, getLocalPoints, getStorage } from '@/lib/storage'
+import { debounceSave, getLocalMeta, getLocalPoints, getStorage, setStorage } from '@/lib/storage'
 import { motion } from 'motion/react'
 import PointComponent from '@/components/point'
 
@@ -15,6 +15,7 @@ export const store = {
 	setPoints: ((points: Point[]) => {}) as Dispatch<SetStateAction<Point[]>>,
 	closedPath: false,
 	d: '',
+	theD: '',
 	totalLength: 0,
 
 	canvasMode: 'normal' as CanvasMode,
@@ -72,8 +73,10 @@ export default function Main() {
 
 	// Path d
 	const d = pointsToPath(points, closedPath)
+	const theD = origin[0] != 0 || origin[1] != 0 ? pointsToPath(points, closedPath, origin) : d
 	const totalLength = getTotalLength(d)
 	store.d = d
+	store.theD = theD
 	store.totalLength = totalLength
 
 	// Select
@@ -118,6 +121,8 @@ export default function Main() {
 		// Events handling
 
 		const mouseDownHandle = (e: MouseEvent) => {
+			if ((e.target as HTMLElement).tagName != 'svg') return
+
 			if (e.which !== 1) return
 
 			setMouseDown(true)
@@ -189,6 +194,17 @@ export default function Main() {
 			window.removeEventListener('mousemove', mounceMoveHandle)
 		}
 	}, [])
+	useEffect(() => {
+		debounceSave(points, closedPath)
+	}, [points, closedPath])
+	useEffect(() => {
+		setStorage('canvasMode', canvasMode)
+		setStorage('mouseMode', mouseMode)
+	}, [canvasMode, mouseMode])
+	useEffect(() => {
+		setStorage('canvas-width', String(canvasWidth))
+		setStorage('canvas-height', String(canvasHeight))
+	}, [canvasHeight, canvasWidth])
 
 	// Actions
 	const deleteHandle = useCallback((e: KeyboardEvent) => {

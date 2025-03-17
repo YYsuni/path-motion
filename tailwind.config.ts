@@ -15,7 +15,8 @@ export default {
 			colors: {
 				primary: '#333',
 				secondary: '#666',
-				brand: '#006aeb'
+				brand: '#006aeb',
+				success: '#09CD9D'
 			}
 		}
 	},

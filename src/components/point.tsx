@@ -74,7 +74,6 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 				<>
 					<path d={`M${point.preControlPoint.x} ${point.preControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
-						onMouseDown={e => e.stopPropagation()}
 						onPan={e => {
 							e.stopPropagation()
 							point.preControlPoint.x = e.pageX
@@ -101,7 +100,6 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 				<>
 					<path d={`M${point.postControlPoint.x} ${point.postControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
 					<motion.circle
-						onMouseDown={e => e.stopPropagation()}
 						onPan={e => {
 							point.postControlPoint.x = e.pageX
 							point.postControlPoint.y = e.pageY
@@ -127,7 +125,6 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 
 			<motion.circle
 				onMouseDown={e => {
-					e.stopPropagation()
 					store.preControlStartOffetX = point.preControlPoint.x - point.x
 					store.preControlStartOffetY = point.preControlPoint.y - point.y
 					store.postControlStartOffetX = point.postControlPoint.x - point.x
@@ -136,7 +133,6 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 				onMouseEnter={() => setActive(true)}
 				onMouseOut={() => setActive(false)}
 				onPan={e => {
-					e.stopPropagation()
 					point.x = e.pageX
 					point.y = e.pageY
 					point.preControlPoint.x = store.preControlStartOffetX + point.x
@@ -146,7 +142,6 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 					point.activate()
 				}}
 				onClick={e => {
-					e.stopPropagation()
 					point.activate()
 					dispatchEvent('activate-point-controls')
 				}}
