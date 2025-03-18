@@ -9,6 +9,7 @@ import Aside from './aside'
 import { debounceSave, getLocalMeta, getLocalPoints, getStorage, setStorage } from '@/lib/storage'
 import { motion } from 'motion/react'
 import PointComponent from '@/components/point'
+import Toolbar from './toolbar'
 
 export const store = {
 	points: [] as Point[],
@@ -21,6 +22,8 @@ export const store = {
 	canvasMode: 'normal' as CanvasMode,
 
 	mouseMode: 'create' as MouseMode,
+	setMouseMode: ((m: MouseMode) => {}) as Dispatch<SetStateAction<MouseMode>>,
+
 	creatingPoint: null as Point | null,
 	selectStart: null as { x: number; y: number } | null
 }
@@ -42,6 +45,7 @@ export default function Main() {
 	const [mouseMode, setMouseMode] = useState<MouseMode>('create')
 	store.canvasMode = canvasMode
 	store.mouseMode = mouseMode
+	store.setMouseMode = setMouseMode
 
 	// Coordinate origin
 	const [origin, setOrigin] = useState([0, 0])
@@ -121,7 +125,7 @@ export default function Main() {
 		// Events handling
 
 		const mouseDownHandle = (e: MouseEvent) => {
-			if ((e.target as HTMLElement).tagName != 'svg') return
+			if (!((e.target as HTMLElement).tagName == 'svg' && (e.target as HTMLElement).id === 'board')) return
 
 			if (e.which !== 1) return
 
@@ -229,10 +233,15 @@ export default function Main() {
 		<div className='flex h-screen w-screen overflow-hidden'>
 			<main
 				ref={mainRef}
-				className='pattern-bg relative flex flex-1 items-center justify-center overflow-hidden bg-[#F5F5F5]'
+				className='pattern-bg relative flex flex-1 items-center justify-center overflow-hidden bg-[#F5F5F5] focus-visible:outline-none'
 				tabIndex={1}
 				onKeyDown={deleteHandle as any}>
-				<svg viewBox={`0 0 ${mainWidth} ${mainHeight}`} fill='none' className='relative h-full w-full select-none' xmlns='http://www.w3.org/2000/svg'>
+				<svg
+					id='board'
+					viewBox={`0 0 ${mainWidth} ${mainHeight}`}
+					fill='none'
+					className='relative h-full w-full select-none'
+					xmlns='http://www.w3.org/2000/svg'>
 					{showOrigin && (
 						<>
 							<motion.rect
@@ -266,7 +275,18 @@ export default function Main() {
 					))}
 				</svg>
 
-				<div className='absolute bottom-4 h-12 w-[300px] rounded-full bg-white/60 shadow'></div>
+				{betterSelectedRect && mouseDown && (
+					<div
+						className='fixed border-[1.5px] border-gray-800 bg-gray-900/20'
+						style={{
+							left: betterSelectedRect[0].x,
+							top: betterSelectedRect[0].y,
+							width: betterSelectedRect[1].x - betterSelectedRect[0].x,
+							height: betterSelectedRect[1].y - betterSelectedRect[0].y
+						}}></div>
+				)}
+
+				<Toolbar />
 			</main>
 			<aside className='w-[300px] bg-[#F9F9F9] shadow-xl shadow-gray-200'>
 				<Aside />

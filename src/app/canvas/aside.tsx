@@ -15,7 +15,7 @@ export default function Aside() {
 
 	return (
 		<div className='p-6'>
-			<ul className='grid grid-cols-2 gap-1 rounded-lg bg-black/5 p-1 text-xs text-secondary'>
+			<ul className='grid grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 text-xs text-secondary'>
 				<li onClick={() => setTab(0)} className={clsx('flex cursor-pointer items-center justify-center rounded-md p-1', tab == 0 && 'bg-white text-primary')}>
 					<CursorSVG className='mr-1 h-4 w-4' />
 					<span>Design</span>
@@ -27,7 +27,7 @@ export default function Aside() {
 			</ul>
 
 			<h3 className='mt-3 px-3 text-sm'>Path</h3>
-			<div className='rounded-lg bg-gray-100 p-3 text-xs font-normal text-secondary'>
+			<div className='min-h-[120px] rounded-lg bg-gray-100 p-3 text-xs font-normal text-secondary'>
 				{store.theD ? <HighlightPathD d={store.theD} /> : 'Click to make path.'}
 			</div>
 
@@ -58,6 +58,14 @@ export default function Aside() {
 						copyTimer = setTimeout(() => setCopied(false), 3000)
 					}}>
 					{copied ? 'Copied!' : 'Copy'}
+				</button>
+				<button
+					className='ml-auto rounded border px-3 py-1 text-xs hover:bg-gray-100 active:bg-gray-200'
+					onClick={() => {
+						store.setPoints([])
+						store.setMouseMode('create')
+					}}>
+					Reset
 				</button>
 			</div>
 		</div>
