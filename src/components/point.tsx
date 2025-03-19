@@ -30,7 +30,7 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 		if (seleted) {
 			return {
 				fill: 'white',
-				stroke: 'black',
+				stroke: '#006aeb',
 				scale: 1
 			}
 		}
@@ -41,7 +41,7 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 			case 'false, refine':
 				return {
 					fill: 'white',
-					stroke: 'black',
+					stroke: '#006aeb',
 					scale: 1
 				}
 			case 'true, refine':
@@ -53,7 +53,7 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 
 			case 'false, point':
 				return {
-					fill: 'black',
+					fill: '#006aeb',
 					stroke: 'transparent',
 					scale: 0.8
 				}
@@ -72,7 +72,7 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 		<>
 			{(canvasMode === 'refine' || point.active) && point.enablePreControl && (
 				<>
-					<path d={`M${point.preControlPoint.x} ${point.preControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
+					<path d={`M${point.preControlPoint.x} ${point.preControlPoint.y} L${point.x} ${point.y}`} stroke='#999' strokeWidth={1.5} />
 					<motion.circle
 						onPan={e => {
 							e.stopPropagation()
@@ -87,10 +87,10 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 							e.stopPropagation()
 						}}
 						className='cursor-pointer'
-						strokeWidth={2}
+						strokeWidth={1.5}
 						fill='white'
 						stroke='#444'
-						r={5}
+						r={4}
 						cx={point.preControlPoint.x}
 						cy={point.preControlPoint.y}
 					/>
@@ -98,7 +98,7 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 			)}
 			{(canvasMode === 'refine' || point.active) && point.enablePostControl && (
 				<>
-					<path d={`M${point.postControlPoint.x} ${point.postControlPoint.y} L${point.x} ${point.y}`} stroke='#6666' strokeWidth={2} />
+					<path d={`M${point.postControlPoint.x} ${point.postControlPoint.y} L${point.x} ${point.y}`} stroke='#999' strokeWidth={1.5} />
 					<motion.circle
 						onPan={e => {
 							point.postControlPoint.x = e.pageX
@@ -113,10 +113,10 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 							e.stopPropagation()
 						}}
 						className='cursor-pointer'
-						strokeWidth={2}
+						strokeWidth={1.5}
 						fill='white'
 						stroke='#444'
-						r={5}
+						r={4}
 						cx={point.postControlPoint.x}
 						cy={point.postControlPoint.y}
 					/>

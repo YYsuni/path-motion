@@ -32,7 +32,7 @@ export default function Toolbar() {
 				</a> */}
 
 				<button
-					className='p-1 text-success -mr-1'
+					className='text-success -mr-1 p-1'
 					onClick={() => {
 						if (store.mouseMode === 'select') store.setMouseMode('create')
 						else store.setMouseMode('select')
@@ -49,6 +49,8 @@ export default function Toolbar() {
 				<button
 					className='rounded-full bg-black/10 p-2.5 text-secondary active:bg-black/20 active:text-primary'
 					onClick={() => {
+						if (!store.d) return
+
 						currentAnimation?.stop()
 
 						const d = store.d
