@@ -8,9 +8,7 @@ export function pointsToPath(points: Point[], closedPath?: boolean, origin = [0,
 		points = points.map(item => {
 			const p = new Point({
 				x: minus(item.x, origin[0]),
-				y: minus(item.y, origin[1]),
-				setPoints: () => {},
-				pointsStore: {}
+				y: minus(item.y, origin[1])
 			})
 
 			p.preControlPoint.x = minus(item.preControlPoint.x, origin[0])
