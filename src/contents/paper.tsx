@@ -278,11 +278,6 @@ export default function Paper({
 													const [points, closedPath] = result
 
 													if (points && points.length) {
-														points.forEach(item => {
-															item.setPoints = setPoints
-															item.pointsStore = store
-														})
-
 														setPoints(points)
 													}
 												}
