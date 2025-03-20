@@ -10,7 +10,6 @@ import { debounceSave, getLocalMeta, getLocalPoints, getStorage, setStorage } fr
 import { motion } from 'motion/react'
 import PointComponent from '@/components/point'
 import Toolbar from './toolbar'
-import ArrowHeadSVG from '@/svgs/arrowhead.svg'
 
 export const store = {
 	points: [] as Point[],
@@ -76,10 +75,7 @@ export default function Main() {
 		store.points.forEach(item => (item.active = false))
 		setPoints([...store.points])
 	}, [])
-	const clear = useCallback(() => {
-		setPoints([])
-		setMouseMode('create')
-	}, [])
+
 	const activePoint = points.find(item => item.active)
 
 	const [closedPath, setClosedPath] = useState(false)
@@ -248,23 +244,27 @@ export default function Main() {
 	}, [canvasHeight, canvasWidth, enableCanvas])
 
 	// Actions
-	const deleteHandle = useCallback((e: KeyboardEvent) => {
-		if (e.key === 'Delete' || e.code === 'Backspace') {
-			activePoint?.deleteSelf()
-			store.points.forEach(point => {
-				if (point.active) {
-					point.deleteSelf()
-				}
-			})
+	const deleteHandle = useCallback(
+		(e: KeyboardEvent) => {
+			if (e.key === 'Delete' || e.code === 'Backspace') {
+				activePoint?.deleteSelf()
+				store.points.forEach(point => {
+					if (point.active) {
+						point.deleteSelf()
+					}
+				})
 
-			if (betterSelectedRect) {
-				const unselectedPoints = store.points.filter(
-					item => !(isBetween(item.x, betterSelectedRect[0].x, betterSelectedRect[1].x) && isBetween(item.y, betterSelectedRect[0].y, betterSelectedRect[1].y))
-				)
-				setPoints(unselectedPoints)
+				if (betterSelectedRect) {
+					const unselectedPoints = store.points.filter(
+						item =>
+							!(isBetween(item.x, betterSelectedRect[0].x, betterSelectedRect[1].x) && isBetween(item.y, betterSelectedRect[0].y, betterSelectedRect[1].y))
+					)
+					setPoints(unselectedPoints)
+				}
 			}
-		}
-	}, [])
+		},
+		[betterSelectedRect]
+	)
 
 	return (
 		<div className='flex h-full overflow-hidden'>

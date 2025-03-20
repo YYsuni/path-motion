@@ -16,7 +16,7 @@ export default function AsideDesign() {
 	return (
 		<>
 			<h3 className='mt-6 px-3 text-sm'>Path</h3>
-			<div className='max-h-[360px] min-h-[120px] overflow-auto rounded-lg bg-gray-100 p-3 text-xs font-normal text-secondary'>
+			<div className='max-h-[360px] min-h-[120px] overflow-auto break-all rounded-lg bg-gray-100 p-3 text-xs font-normal text-secondary'>
 				{store.theD ? <HighlightPathD d={store.theD} /> : 'Click to make path.'}
 			</div>
 
