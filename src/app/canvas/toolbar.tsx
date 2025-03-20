@@ -26,13 +26,13 @@ export default function Toolbar() {
 			<motion.div
 				initial={{ bottom: 10, opacity: 0 }}
 				animate={{ bottom: 16, opacity: 1 }}
-				className='absolute bottom-4 flex h-12 items-center gap-3 rounded-full bg-white px-3 shadow'>
+				className='absolute bottom-6 flex h-12 items-center gap-3 rounded-full bg-white px-3 shadow'>
 				{/* <a className='p-1 text-black/30 hover:text-black/50' href='https://github.com/YYsuni/path-motion' target='_blank'>
 					<GithubSVG className='h-6 w-6' />
 				</a> */}
 
 				<button
-					className='text-success -mr-1 p-1'
+					className='text-success -mr-1 rounded-full p-1 hover:bg-gray-100'
 					onClick={() => {
 						if (store.mouseMode === 'select') store.setMouseMode('create')
 						else store.setMouseMode('select')

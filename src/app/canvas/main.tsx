@@ -14,14 +14,16 @@ import ArrowHeadSVG from '@/svgs/arrowhead.svg'
 
 export const store = {
 	points: [] as Point[],
-	setPoints: ((points: Point[]) => {}) as Dispatch<SetStateAction<Point[]>>,
+	setPoints: (() => {}) as Dispatch<SetStateAction<Point[]>>,
 	closedPath: false,
-	setClosedPath: ((b: boolean) => {}) as Dispatch<SetStateAction<boolean>>,
+	setClosedPath: (() => {}) as Dispatch<SetStateAction<boolean>>,
 	showArrow: false,
-	setShowArrow: ((b: boolean) => {}) as Dispatch<SetStateAction<boolean>>,
+	setShowArrow: (() => {}) as Dispatch<SetStateAction<boolean>>,
 	d: '',
 	theD: '',
 	totalLength: 0,
+	origin: [0, 0],
+	setOrigin: (() => {}) as Dispatch<SetStateAction<number[]>>,
 
 	canvasMode: 'normal' as CanvasMode,
 	setCanvasMode: ((c: CanvasMode) => {}) as Dispatch<SetStateAction<CanvasMode>>,
@@ -30,28 +32,32 @@ export const store = {
 	setMouseMode: ((m: MouseMode) => {}) as Dispatch<SetStateAction<MouseMode>>,
 
 	creatingPoint: null as Point | null,
-	selectStart: null as { x: number; y: number } | null
+	selectStart: null as { x: number; y: number } | null,
+
+	enableCanvas: false,
+	setEnableCanvas: (() => {}) as Dispatch<SetStateAction<boolean>>,
+	canvasWidth: 0,
+	canvasHeight: 0,
+	setCanvasSize: (() => {}) as Dispatch<SetStateAction<[number, number]>>
 }
 
 const ORIGIN_RADIUS = 10000
 const ORIGIN_WIDTH = 1
-const ORIGIN_COLOR = '#6666'
+const ORIGIN_COLOR = '#9996'
 let originTimer: NodeJS.Timeout | undefined
 
 export default function Main() {
 	const [init, setInit] = useState(false)
 	const mainRef = useRef<HTMLElement>(null)
 	const [[mainWidth, mainHeight], setMainSize] = useState([0, 0])
-	const [[canvasWidth, canvasHeight], setCanvasSize] = useState([0, 0])
+
+	const [enableCanvas, setEnableCanvas] = useState(false)
+	const [[canvasWidth, canvasHeight], setCanvasSize] = useState([900, 600])
 	const [mouseDown, setMouseDown] = useState(false)
 
 	// Canvas canvasMode
 	const [canvasMode, setCanvasMode] = useState<CanvasMode>('normal')
 	const [mouseMode, setMouseMode] = useState<MouseMode>('create')
-	store.canvasMode = canvasMode
-	store.mouseMode = mouseMode
-	store.setMouseMode = setMouseMode
-	store.setCanvasMode = setCanvasMode
 
 	// Coordinate origin
 	const [origin, setOrigin] = useState([0, 0])
@@ -65,8 +71,7 @@ export default function Main() {
 
 	// Points
 	const [points, setPoints] = useState<Point[]>([])
-	store.points = points
-	store.setPoints = setPoints
+
 	const staticize = useCallback(() => {
 		store.points.forEach(item => (item.active = false))
 		setPoints([...store.points])
@@ -78,21 +83,15 @@ export default function Main() {
 	const activePoint = points.find(item => item.active)
 
 	const [closedPath, setClosedPath] = useState(false)
-	store.closedPath = closedPath
-	store.setClosedPath = setClosedPath
+
 	const endPoint = points.length > 2 && closedPath ? points[0] : points[points.length - 1]
 
 	const [showArrow, setShowArrow] = useState(false)
-	store.showArrow = showArrow
-	store.setShowArrow = setShowArrow
 
 	// Path d
 	const d = pointsToPath(points, closedPath)
 	const theD = origin[0] != 0 || origin[1] != 0 ? pointsToPath(points, closedPath, origin) : d
 	const totalLength = getTotalLength(d)
-	store.d = d
-	store.theD = theD
-	store.totalLength = totalLength
 
 	// Select
 	const [selectedRect, setSelectedRect] = useState<{ x: number; y: number }[] | null>(null)
@@ -102,6 +101,30 @@ export default function Main() {
 				{ x: Math.max(selectedRect[0].x, selectedRect[1].x), y: Math.max(selectedRect[0].y, selectedRect[1].y) }
 			]
 		: null
+
+	// Store values
+	{
+		store.enableCanvas = enableCanvas
+		store.setEnableCanvas = setEnableCanvas
+		store.canvasWidth = canvasWidth
+		store.canvasHeight = canvasHeight
+		store.setCanvasSize = setCanvasSize
+		store.canvasMode = canvasMode
+		store.mouseMode = mouseMode
+		store.setMouseMode = setMouseMode
+		store.setCanvasMode = setCanvasMode
+		store.closedPath = closedPath
+		store.setClosedPath = setClosedPath
+		store.points = points
+		store.setPoints = setPoints
+		store.showArrow = showArrow
+		store.setShowArrow = setShowArrow
+		store.d = d
+		store.theD = theD
+		store.totalLength = totalLength
+		store.origin = origin
+		store.setOrigin = setOrigin
+	}
 
 	useEffect(() => {
 		setInit(true)
@@ -121,6 +144,8 @@ export default function Main() {
 		// Init canvas sizes from local storage
 		const cw = getStorage('canvas-width')!
 		const ch = getStorage('canvas-height')!
+		const enableCanvas = getStorage('enableCanvas') == 'true'
+		setEnableCanvas(enableCanvas)
 		if (+cw || +ch) setCanvasSize([+cw || 0, +ch || 0])
 
 		// Screen resize
@@ -217,9 +242,10 @@ export default function Main() {
 		setStorage('mouseMode', mouseMode)
 	}, [canvasMode, mouseMode])
 	useEffect(() => {
+		setStorage('enableCanvas', String(enableCanvas))
 		setStorage('canvas-width', String(canvasWidth))
 		setStorage('canvas-height', String(canvasHeight))
-	}, [canvasHeight, canvasWidth])
+	}, [canvasHeight, canvasWidth, enableCanvas])
 
 	// Actions
 	const deleteHandle = useCallback((e: KeyboardEvent) => {
@@ -241,12 +267,20 @@ export default function Main() {
 	}, [])
 
 	return (
-		<div className='flex h-screen w-screen overflow-hidden'>
+		<div className='flex h-full overflow-hidden'>
 			<main
 				ref={mainRef}
 				className='pattern-bg relative flex flex-1 items-center justify-center overflow-hidden bg-[#F5F5F5] focus-visible:outline-none'
 				tabIndex={1}
 				onKeyDown={deleteHandle as any}>
+				{enableCanvas && !!canvasWidth && !!canvasHeight && (
+					<motion.div
+						id='canvas'
+						className='pointer-events-none absolute border bg-white/60'
+						initial={{ width: canvasWidth, height: canvasHeight }}
+						animate={{ width: canvasWidth, height: canvasHeight }}></motion.div>
+				)}
+
 				<svg
 					id='board'
 					viewBox={`0 0 ${mainWidth} ${mainHeight}`}
@@ -293,6 +327,7 @@ export default function Main() {
 						<PointComponent key={item.uid} point={item} canvasMode={canvasMode} betterSelectedRect={betterSelectedRect} />
 					))}
 				</svg>
+
 				{showArrow && points.length > 1 && (
 					<svg
 						style={{

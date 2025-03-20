@@ -2,11 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-	@apply text-primary;
+html,
+body {
+	height: 100%;
 }
 
 html {
+	@apply text-primary;
 	scrollbar-width: none;
 	font-weight: 500;
 	&::-webkit-scrollbar {

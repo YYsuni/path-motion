@@ -75,7 +75,7 @@ export function savePointsAndMeta(points: Point[], closedPath: boolean) {
 
 export const debounceSave = debounce(savePointsAndMeta, 1000)
 
-type Key = 'canvasMode' | 'mouseMode' | 'canvas-width' | 'canvas-height'
+type Key = 'canvasMode' | 'mouseMode' | 'canvas-width' | 'canvas-height' | 'enableCanvas'
 
 export const setStorage = (key: Key, value: string) => {
 	window.localStorage.setItem(key, value)
