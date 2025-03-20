@@ -14,7 +14,7 @@ export default function AsideSetting() {
 
 	return (
 		<>
-			<div className='mt-9 rounded-lg bg-gray-100 p-3 text-sm'>
+			<div className='mt-6 rounded-lg bg-gray-100 p-3 text-sm'>
 				<div className='flex items-center'>
 					<div className='text-md mr-1 flex h-5 w-5 items-center justify-center self-start text-[#999]'>#</div>
 					<div>
