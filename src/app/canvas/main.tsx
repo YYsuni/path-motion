@@ -12,6 +12,8 @@ import PointComponent from '@/components/point'
 import Toolbar from './toolbar'
 
 export const store = {
+	uid: '',
+
 	points: [] as Point[],
 	setPoints: (() => {}) as Dispatch<SetStateAction<Point[]>>,
 	closedPath: false,

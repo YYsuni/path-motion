@@ -10,6 +10,7 @@ import PlusSVG from '@/svgs/buttons/plus.svg'
 import FileSVG from '@/svgs/file.svg'
 import CursorSVG from '@/svgs/cursor.svg'
 import FigureSVG from '@/svgs/figure.svg'
+import TriSVG from '@/svgs/tri.svg'
 
 let currentAnimation = null as AnimationPlaybackControls | null
 
@@ -19,9 +20,9 @@ export default function Toolbar() {
 
 	return (
 		<>
-			<div
-				ref={ref}
-				className='fixed bottom-2 left-0 top-0 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-black bg-white'></div>
+			<div ref={ref} className='fixed flex items-center justify-center'>
+				<TriSVG className='absolute -top-5 right-0 h-10' />
+			</div>
 
 			<motion.div
 				initial={{ bottom: 10, opacity: 0 }}
@@ -64,6 +65,11 @@ export default function Toolbar() {
 								const { x: currentX, y: currentY } = getPointAtLength(d, currentLength)
 								ref.current!.style.left = currentX + 'px'
 								ref.current!.style.top = currentY + 'px'
+
+								const nextPoint = getPointAtLength(d, currentLength + 1)
+								const angle = Math.atan2(nextPoint.y - currentY, nextPoint.x - currentX) * (180 / Math.PI) + 90
+
+								ref.current!.style.rotate = angle - 90 + 'deg'
 							},
 							duration: pathLength / +speed,
 							onComplete() {
