@@ -20,9 +20,10 @@ export default function Aside() {
 					<span>Setting</span>
 				</li>
 			</ul>
-
-			{tab === 0 && <AsideDesign />}
-			{tab === 1 && <AsideSetting />}
+			<div className='mt-6 space-y-9'>
+				{tab === 0 && <AsideDesign />}
+				{tab === 1 && <AsideSetting />}
+			</div>
 		</div>
 	)
 }

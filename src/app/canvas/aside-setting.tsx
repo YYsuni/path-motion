@@ -2,7 +2,6 @@ import Checkbox from '@/components/checkbox'
 import { store } from './main'
 import { useRef, useState } from 'react'
 import { fixNumber, pathToPoints } from '@/lib/utils'
-import { motion } from 'motion/react'
 import PrevSVG from '@/svgs/prev.svg'
 import NextSVG from '@/svgs/next.svg'
 
@@ -14,7 +13,7 @@ export default function AsideSetting() {
 
 	return (
 		<>
-			<div className='mt-6 rounded-lg bg-gray-100 p-3 text-sm'>
+			<section className='rounded-lg bg-gray-100 p-3 text-sm'>
 				<div className='flex items-center'>
 					<div className='text-md mr-1 flex h-5 w-5 items-center justify-center self-start text-[#999]'>#</div>
 					<div>
@@ -49,81 +48,82 @@ export default function AsideSetting() {
 						</div>
 					</div>
 				)}
-			</div>
+			</section>
 
-			<h3 className='mt-9 px-3 text-sm'>
-				Origin{' '}
-				<span className='text-xs text-black/40'>
-					({store.origin[0]}, {store.origin[1]})
-				</span>
-			</h3>
-			<div className='mt-3 flex gap-1'>
-				<button
-					onClick={() => {
-						setOriginIndex(-2)
-						store.setOrigin([0, 0])
-					}}
-					className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
-					Screen Left Top
-				</button>
-				{store.enableCanvas && (
-					<button
-						onClick={() => {
-							const canvasElement = document.getElementById('canvas')
-							if (canvasElement) {
-								const { left, top } = canvasElement.getBoundingClientRect()
-
-								setOriginIndex(-1)
-								store.setOrigin([fixNumber(left), fixNumber(top)])
-							}
-						}}
-						className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
-						Canvas Left Top
-					</button>
-				)}
-			</div>
-
-			{store.points.length > 0 && (
+			<section>
+				<h3 className='px-3 text-sm'>
+					Origin{' '}
+					<span className='text-xs text-black/40'>
+						({store.origin[0]}, {store.origin[1]})
+					</span>
+				</h3>
 				<div className='mt-3 flex gap-1'>
 					<button
 						onClick={() => {
-							if (store.points[0]) store.setOrigin([store.points[0].x, store.points[0].y])
+							setOriginIndex(-2)
+							store.setOrigin([0, 0])
 						}}
 						className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
-						First point
+						Screen Left Top
 					</button>
-					<button
-						onClick={() => {
-							const points = store.points
-							const index = originIndex < 0 ? 0 : originIndex === 0 ? points.length - 1 : (originIndex - 1) % points.length
-							setOriginIndex(index)
-							store.setOrigin([points[index].x, points[index].y])
-						}}
-						className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
-						<PrevSVG className='h-5 w-5' />
-					</button>
-					<button
-						onClick={() => {
-							const points = store.points
-							const index = originIndex < 0 ? 0 : (originIndex + 1) % points.length
-							setOriginIndex(index)
-							store.setOrigin([points[index].x, points[index].y])
-						}}
-						className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
-						<NextSVG className='h-5 w-5' />
-					</button>
-					<button
-						onClick={() => {
-							const points = store.points
-							if (points[0]) store.setOrigin([points[points.length - 1].x, points[points.length - 1].y])
-						}}
-						className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
-						Last point
-					</button>
-				</div>
-			)}
+					{store.enableCanvas && (
+						<button
+							onClick={() => {
+								const canvasElement = document.getElementById('canvas')
+								if (canvasElement) {
+									const { left, top } = canvasElement.getBoundingClientRect()
 
-			<div className='mt-9 rounded-lg bg-gray-100 p-3 text-sm'>
+									setOriginIndex(-1)
+									store.setOrigin([fixNumber(left), fixNumber(top)])
+								}
+							}}
+							className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
+							Canvas Left Top
+						</button>
+					)}
+				</div>
+				{store.points.length > 0 && (
+					<div className='mt-3 flex gap-1'>
+						<button
+							onClick={() => {
+								if (store.points[0]) store.setOrigin([store.points[0].x, store.points[0].y])
+							}}
+							className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
+							First point
+						</button>
+						<button
+							onClick={() => {
+								const points = store.points
+								const index = originIndex < 0 ? 0 : originIndex === 0 ? points.length - 1 : (originIndex - 1) % points.length
+								setOriginIndex(index)
+								store.setOrigin([points[index].x, points[index].y])
+							}}
+							className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
+							<PrevSVG className='h-5 w-5' />
+						</button>
+						<button
+							onClick={() => {
+								const points = store.points
+								const index = originIndex < 0 ? 0 : (originIndex + 1) % points.length
+								setOriginIndex(index)
+								store.setOrigin([points[index].x, points[index].y])
+							}}
+							className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
+							<NextSVG className='h-5 w-5' />
+						</button>
+						<button
+							onClick={() => {
+								const points = store.points
+								if (points[0]) store.setOrigin([points[points.length - 1].x, points[points.length - 1].y])
+							}}
+							className='cursor-pointer rounded border p-2 text-center text-xs hover:bg-gray-100 active:bg-gray-200'>
+							Last point
+						</button>
+					</div>
+				)}
+			</section>
+
+			<section className='rounded-lg bg-gray-100 p-3 text-sm'>
 				<div className='flex items-center'>
 					<div className='mr-1 flex h-5 w-5 items-center justify-center self-start text-lg text-[#999]'>“</div>
 					<div>
@@ -160,7 +160,7 @@ export default function AsideSetting() {
 						</div>
 					</div>
 				)}
-			</div>
+			</section>
 		</>
 	)
 }

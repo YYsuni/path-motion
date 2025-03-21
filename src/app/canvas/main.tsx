@@ -23,6 +23,7 @@ export const store = {
 	totalLength: 0,
 	origin: [0, 0],
 	setOrigin: (() => {}) as Dispatch<SetStateAction<number[]>>,
+	activePoint: undefined as undefined | Point,
 
 	canvasMode: 'normal' as CanvasMode,
 	setCanvasMode: ((c: CanvasMode) => {}) as Dispatch<SetStateAction<CanvasMode>>,
@@ -120,6 +121,7 @@ export default function Main() {
 		store.totalLength = totalLength
 		store.origin = origin
 		store.setOrigin = setOrigin
+		store.activePoint = activePoint
 	}
 
 	useEffect(() => {
@@ -160,6 +162,8 @@ export default function Main() {
 			if (!((e.target as HTMLElement).tagName == 'svg' && (e.target as HTMLElement).id === 'board')) return
 
 			if (e.which !== 1) return
+
+			staticize()
 
 			setMouseDown(true)
 
@@ -281,52 +285,54 @@ export default function Main() {
 						animate={{ width: canvasWidth, height: canvasHeight }}></motion.div>
 				)}
 
-				<svg
-					id='board'
-					viewBox={`0 0 ${mainWidth} ${mainHeight}`}
-					fill='none'
-					className='relative h-full w-full select-none'
-					xmlns='http://www.w3.org/2000/svg'>
-					<defs>
-						<radialGradient id='gradient' cx='0%' cy='0%' r='100%' gradientUnits='userSpaceOnUse'>
-							<stop offset='0%' stopColor='#23D093' />
-							<stop offset='75%' stopColor='#AFABF6' />
-							<stop offset='100%' stopColor='#4CC8F3' />
-						</radialGradient>
-					</defs>
+				{init && (
+					<svg
+						id='board'
+						viewBox={`0 0 ${mainWidth} ${mainHeight}`}
+						fill='none'
+						className='relative h-full w-full select-none'
+						xmlns='http://www.w3.org/2000/svg'>
+						<defs>
+							<radialGradient id='gradient' cx='0%' cy='0%' r='100%' gradientUnits='userSpaceOnUse'>
+								<stop offset='0%' stopColor='#23D093' />
+								<stop offset='75%' stopColor='#AFABF6' />
+								<stop offset='100%' stopColor='#4CC8F3' />
+							</radialGradient>
+						</defs>
 
-					{showOrigin && (
-						<>
-							<motion.rect
-								animate={{
-									x: origin[0] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2,
-									y: origin[1] - ORIGIN_WIDTH / 2
-								}}
-								transition={{ ease: 'linear' }}
-								width={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
-								height={ORIGIN_WIDTH}
-								fill={ORIGIN_COLOR}
-							/>
-							<motion.rect
-								animate={{ x: origin[0] - ORIGIN_WIDTH / 2, y: origin[1] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2 }}
-								transition={{ ease: 'linear' }}
-								width={ORIGIN_WIDTH}
-								height={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
-								fill={ORIGIN_COLOR}
-							/>
-						</>
-					)}
+						{showOrigin && (
+							<>
+								<motion.rect
+									animate={{
+										x: origin[0] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2,
+										y: origin[1] - ORIGIN_WIDTH / 2
+									}}
+									transition={{ ease: 'linear' }}
+									width={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
+									height={ORIGIN_WIDTH}
+									fill={ORIGIN_COLOR}
+								/>
+								<motion.rect
+									animate={{ x: origin[0] - ORIGIN_WIDTH / 2, y: origin[1] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2 }}
+									transition={{ ease: 'linear' }}
+									width={ORIGIN_WIDTH}
+									height={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
+									fill={ORIGIN_COLOR}
+								/>
+							</>
+						)}
 
-					<text x={origin[0] + 5} y={origin[1] - 5} className='text-black/40' fill='currentColor' fontSize={10}>
-						(0, 0)
-					</text>
+						<text x={origin[0] + 5} y={origin[1] - 5} className='text-black/40' fill='currentColor' fontSize={10}>
+							(0, 0)
+						</text>
 
-					<path d={d} stroke='url(#gradient)' strokeWidth={2.5} strokeLinejoin='round' />
+						<path d={d} stroke='url(#gradient)' strokeWidth={2.5} strokeLinejoin='round' />
 
-					{points.map(item => (
-						<PointComponent key={item.uid} point={item} canvasMode={canvasMode} betterSelectedRect={betterSelectedRect} />
-					))}
-				</svg>
+						{points.map(item => (
+							<PointComponent key={item.uid} point={item} canvasMode={canvasMode} betterSelectedRect={betterSelectedRect} />
+						))}
+					</svg>
+				)}
 
 				{showArrow && points.length > 1 && (
 					<svg
