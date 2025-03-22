@@ -20,7 +20,7 @@ export default function Toolbar() {
 
 	return (
 		<>
-			<div ref={ref} className='fixed flex items-center justify-center'>
+			<div ref={ref} className='fixed hidden'>
 				<TriSVG className='absolute -top-5 right-0 h-10' />
 			</div>
 
@@ -33,7 +33,7 @@ export default function Toolbar() {
 				</a> */}
 
 				<button
-					className='text-success -mr-1 rounded-full p-1 hover:bg-gray-100'
+					className='-mr-1 rounded-full p-1 text-success hover:bg-gray-100'
 					onClick={() => {
 						if (store.mouseMode === 'select') store.setMouseMode('create')
 						else store.setMouseMode('select')
@@ -53,20 +53,21 @@ export default function Toolbar() {
 						if (!store.d) return
 
 						currentAnimation?.stop()
+						const pathElement = document.getElementById('path') as any as SVGPathElement
+						if (!pathElement) return
 
-						const d = store.d
-						const pathLength = store.totalLength
+						const pathLength = pathElement.getTotalLength()
 
 						ref.current!.style.display = 'block'
 						currentAnimation = animate(0, 100, {
 							ease: 'linear',
 							onUpdate: latest => {
 								const currentLength = (latest / 100) * pathLength
-								const { x: currentX, y: currentY } = getPointAtLength(d, currentLength)
+								const { x: currentX, y: currentY } = pathElement.getPointAtLength(currentLength)
 								ref.current!.style.left = currentX + 'px'
 								ref.current!.style.top = currentY + 'px'
 
-								const nextPoint = getPointAtLength(d, currentLength + 1)
+								const nextPoint = pathElement.getPointAtLength(currentLength + 1)
 								const angle = Math.atan2(nextPoint.y - currentY, nextPoint.x - currentX) * (180 / Math.PI) + 90
 
 								ref.current!.style.rotate = angle - 90 + 'deg'

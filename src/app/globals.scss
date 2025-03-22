@@ -28,3 +28,12 @@ html {
 .pattern-bg {
 	background-image: url('/images/point.svg');
 }
+
+@keyframes move {
+	0% {
+		offset-distance: 0%;
+	}
+	100% {
+		offset-distance: 100%;
+	}
+}

@@ -89,8 +89,9 @@ export default function Main() {
 
 	// Path d
 	const d = pointsToPath(points, closedPath)
+	const pathRef = useRef<SVGPathElement>(null)
 	const theD = origin[0] != 0 || origin[1] != 0 ? pointsToPath(points, closedPath, origin) : d
-	const totalLength = getTotalLength(d)
+	const totalLength = pathRef.current?.getTotalLength() || 0
 
 	// Select
 	const [selectedRect, setSelectedRect] = useState<{ x: number; y: number }[] | null>(null)
@@ -328,7 +329,7 @@ export default function Main() {
 							(0, 0)
 						</text>
 
-						<path d={d} stroke='url(#gradient)' strokeWidth={2.5} strokeLinejoin='round' />
+						<path ref={pathRef} d={d} stroke='url(#gradient)' id='path' strokeWidth={2.5} strokeLinejoin='round' />
 
 						{points.map(item => (
 							<PointComponent key={item.uid} point={item} canvasMode={canvasMode} betterSelectedRect={betterSelectedRect} />
