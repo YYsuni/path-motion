@@ -2,6 +2,7 @@ import { Point } from './point'
 import { debounce } from 'ts-debounce'
 
 const POINTS_LOCAL_KEY = 'points'
+const RECORDS_LOCAL_KEY = 'records'
 const META_LOCAL_KEY = 'closedPath'
 
 export function savePoints(points: Point[]) {
@@ -31,7 +32,10 @@ export function pointsToJSON(points: Point[]) {
 export function getLocalPoints(): Point[] | null {
 	const str = localStorage.getItem(POINTS_LOCAL_KEY)
 	if (!str) return null
+	return jsonToPoints(str)
+}
 
+export function jsonToPoints(str: string): Point[] | null {
 	let pointsArr: any[] | null = null
 	try {
 		const value = JSON.parse(str)
@@ -71,6 +75,16 @@ export function getLocalMeta() {
 export function savePointsAndMeta(points: Point[], closedPath: boolean) {
 	savePoints(points)
 	saveMeta(closedPath)
+}
+
+export function saveRecords(records: PathRecord[]) {
+	const str = JSON.stringify(records)
+	localStorage.setItem(RECORDS_LOCAL_KEY, str)
+}
+export function getLocalRecords(): PathRecord[] | null {
+	const str = localStorage.getItem(RECORDS_LOCAL_KEY)
+	if (!str) return null
+	return JSON.parse(str)
 }
 
 export const debounceSave = debounce(savePointsAndMeta, 1000)

@@ -7,3 +7,13 @@ declare module '*.svg?url' {
 
 	export default content
 }
+
+declare type PathRecord = {
+	uid: string
+	name: string
+	points: string
+	d: string
+	theD: string
+	closedPath: boolean
+	timestamp: number
+}

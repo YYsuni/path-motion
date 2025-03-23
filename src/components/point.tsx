@@ -29,7 +29,7 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 	const animateStyle = useMemo(() => {
 		if (seleted) {
 			return {
-				fill: 'white',
+				fill: '#fff',
 				stroke: '#006aeb',
 				scale: 1
 			}
@@ -40,13 +40,13 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 			case 'true, point':
 			case 'false, refine':
 				return {
-					fill: 'white',
+					fill: '#fff',
 					stroke: '#006aeb',
 					scale: 1
 				}
 			case 'true, refine':
 				return {
-					fill: 'white',
+					fill: '#fff',
 					stroke: '#006aeb',
 					scale: 1
 				}
@@ -54,15 +54,15 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 			case 'false, point':
 				return {
 					fill: '#006aeb',
-					stroke: 'transparent',
+					stroke: '#fff0',
 					scale: 0.8
 				}
 
 			case 'false, normal':
 			default:
 				return {
-					fill: 'transparent',
-					stroke: 'transparent',
+					fill: '#fff0',
+					stroke: '#fff0',
 					scale: 0.8
 				}
 		}
@@ -88,7 +88,7 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 						}}
 						className='cursor-pointer'
 						strokeWidth={1.5}
-						fill='white'
+						fill='#fff'
 						stroke='#444'
 						r={4}
 						cx={point.preControlPoint.x}
@@ -114,7 +114,7 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 						}}
 						className='cursor-pointer'
 						strokeWidth={1.5}
-						fill='white'
+						fill='#fff'
 						stroke='#444'
 						r={4}
 						cx={point.postControlPoint.x}

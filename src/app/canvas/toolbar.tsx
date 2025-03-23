@@ -1,16 +1,16 @@
 import PlaySVG from '@/svgs/play.svg'
-import GithubSVG from '@/svgs/github.svg'
 import { useRef, useState } from 'react'
 import { animate, AnimationPlaybackControls } from 'motion'
 import { motion } from 'motion/react'
 import { store } from './main'
-import { getPointAtLength } from 'svg-path-commander'
 import MinusSVG from '@/svgs/buttons/minus.svg'
 import PlusSVG from '@/svgs/buttons/plus.svg'
 import FileSVG from '@/svgs/file.svg'
+import FileSaveSVG from '@/svgs/file-saved.svg'
 import CursorSVG from '@/svgs/cursor.svg'
 import FigureSVG from '@/svgs/figure.svg'
 import TriSVG from '@/svgs/tri.svg'
+import clsx from 'clsx'
 
 let currentAnimation = null as AnimationPlaybackControls | null
 
@@ -41,10 +41,15 @@ export default function Toolbar() {
 					{store.mouseMode === 'select' ? <CursorSVG className='h-5 w-5' /> : <FigureSVG className='h-5 w-5' />}
 				</button>
 
-				<div className='flex cursor-pointer items-center gap-1 rounded-full bg-black/5 py-1 pl-2 pr-3 text-sm'>
-					<FileSVG className='h-5 w-5 text-black/40' />
+				<div
+					onClick={() => store.setNameOpen(true)}
+					className={clsx(
+						'flex min-w-[60px] max-w-[120px] cursor-pointer items-center gap-1 rounded-full bg-black/5 py-1 pl-2 pr-3 text-sm',
+						store.name ? 'text-secondary' : 'font-normal text-black/40'
+					)}>
+					{store.name ? <FileSaveSVG className='h-5 w-5 shrink-0' /> : <FileSVG className='h-5 w-5' />}
 
-					<span className='font-normal text-secondary'>Untitled</span>
+					<span className='overflow-hidden text-ellipsis'>{store.name || 'Untitled'}</span>
 				</div>
 
 				<button

@@ -14,6 +14,9 @@ import CCSVG from '@/svgs/point-controls/c-c.svg'
 import CCWSVG from '@/svgs/point-controls/c-c-w.svg'
 import CCWESVG from '@/svgs/point-controls/c-c-w-e.svg'
 import DeleteSVG from '@/svgs/delete.svg'
+import dayjs from 'dayjs'
+import PreviewD from '@/components/preview-d'
+import { jsonToPoints } from '@/lib/storage'
 
 let copyTimer: any = null
 
@@ -158,7 +161,7 @@ export default function AsideDesign() {
 			<section>
 				<h3 className='px-3 text-sm'>Path</h3>
 				<div className='max-h-[360px] min-h-[120px] overflow-auto break-all rounded-lg bg-gray-100 p-3 text-xs font-normal text-secondary'>
-					{store.theD ? <HighlightPathD d={store.theD} /> : 'Click to make path.'}
+					{store.theD ? <HighlightPathD d={store.theD} /> : 'Click to get path.'}
 				</div>
 				<div className='mt-1.5 flex gap-1'>
 					<button
@@ -294,6 +297,50 @@ export default function AsideDesign() {
 					</li>
 				</ul>
 			</section>
+
+			{store.records.length > 0 && (
+				<section>
+					<h3 className='px-3 text-sm'>Records</h3>
+
+					<ul className='mt-3 space-y-1 text-sm'>
+						{store.records.map((item, i) => (
+							<li key={item.uid} className='flex items-center rounded-lg bg-gray-100 p-3'>
+								<div className='mr-3 flex h-8 w-10 shrink-0 items-center justify-center rounded border bg-white'>
+									<PreviewD d={item.theD} />
+								</div>
+								<div>
+									<div className='max-w-[100px] overflow-hidden text-ellipsis text-sm'>{item.name}</div>
+									<div className='text-xs font-normal text-secondary'>{dayjs(item.timestamp).format('HH:mm MM/D/YY')}</div>
+								</div>
+								<div className='ml-auto flex w-[60px] flex-col gap-0.5 text-center text-xs font-normal'>
+									<button
+										onClick={() => {
+											store.uid = item.uid
+											store.name = item.name
+											store.points = jsonToPoints(item.points) || []
+											store.closedPath = item.closedPath
+
+											const [record] = store.records.splice(i, 1)
+
+											store.setRecords([record, ...store.records])
+										}}
+										className='w-full rounded border bg-gray-50 py-0.5 hover:bg-gray-100 active:bg-gray-200'>
+										Apply
+									</button>
+									<button
+										onClick={() => {
+											store.records.splice(i, 1)
+											store.setRecords(s => [...store.records])
+										}}
+										className='w-full rounded border bg-gray-50 py-0.5 hover:bg-gray-100 active:bg-gray-200'>
+										Delete
+									</button>
+								</div>
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
 		</>
 	)
 }

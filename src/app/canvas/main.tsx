@@ -4,15 +4,17 @@ import { CanvasMode, MouseMode } from '@/consts'
 import { Point } from '@/lib/point'
 import { isBetween, pointsToPath } from '@/lib/utils'
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
-import { getTotalLength } from 'svg-path-commander'
 import Aside from './aside'
-import { debounceSave, getLocalMeta, getLocalPoints, getStorage, setStorage } from '@/lib/storage'
+import { debounceSave, getLocalMeta, getLocalPoints, getLocalRecords, getStorage, saveRecords, setStorage } from '@/lib/storage'
 import { motion } from 'motion/react'
 import PointComponent from '@/components/point'
 import Toolbar from './toolbar'
+import { v4 as uuidv4 } from 'uuid'
+import NameDialog from './name-dialog'
 
 export const store = {
 	uid: '',
+	name: '',
 
 	points: [] as Point[],
 	setPoints: (() => {}) as Dispatch<SetStateAction<Point[]>>,
@@ -40,7 +42,12 @@ export const store = {
 	setEnableCanvas: (() => {}) as Dispatch<SetStateAction<boolean>>,
 	canvasWidth: 0,
 	canvasHeight: 0,
-	setCanvasSize: (() => {}) as Dispatch<SetStateAction<[number, number]>>
+	setCanvasSize: (() => {}) as Dispatch<SetStateAction<[number, number]>>,
+
+	nameOpen: false,
+	setNameOpen: (() => {}) as Dispatch<SetStateAction<boolean>>,
+	records: [] as PathRecord[],
+	setRecords: (() => {}) as Dispatch<SetStateAction<PathRecord[]>>
 }
 
 const ORIGIN_RADIUS = 10000
@@ -102,6 +109,9 @@ export default function Main() {
 			]
 		: null
 
+	const [nameOpen, setNameOpen] = useState(false)
+	const [records, setRecords] = useState<PathRecord[]>([])
+
 	// Store values
 	{
 		store.enableCanvas = enableCanvas
@@ -125,16 +135,24 @@ export default function Main() {
 		store.origin = origin
 		store.setOrigin = setOrigin
 		store.activePoint = activePoint
+		store.nameOpen = nameOpen
+		store.setNameOpen = setNameOpen
+		store.records = records
+		store.setRecords = setRecords
 	}
 
 	useEffect(() => {
 		setInit(true)
 
-		// Init points from local storage
+		store.uid = uuidv4()
+
+		// Init points and records from local storage
 		const localPoints = getLocalPoints()
 		if (localPoints) setPoints(localPoints)
 		const localMeta = getLocalMeta()
 		if (localMeta) setClosedPath(true)
+		const records = getLocalRecords()
+		if (records) setRecords(records)
 
 		// Init modes from local storage
 		const localCanvasMode = getStorage('canvasMode')
@@ -249,6 +267,9 @@ export default function Main() {
 		setStorage('canvas-width', String(canvasWidth))
 		setStorage('canvas-height', String(canvasHeight))
 	}, [canvasHeight, canvasWidth, enableCanvas])
+	useEffect(() => {
+		saveRecords(records)
+	}, [records])
 
 	// Actions
 	const deleteHandle = useCallback(
@@ -365,9 +386,12 @@ export default function Main() {
 
 				<Toolbar />
 			</main>
-			<aside className='w-[300px] bg-[#F9F9F9] shadow-xl shadow-gray-200'>
+
+			<aside className='w-[300px] overflow-auto bg-[#F9F9F9] shadow-xl shadow-gray-200'>
 				<Aside />
 			</aside>
+
+			{nameOpen && <NameDialog />}
 		</div>
 	)
 }

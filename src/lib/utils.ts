@@ -1,5 +1,11 @@
 import { Point } from './point'
 import Decimal from 'decimal.js'
+import clsx, { ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs))
+}
 
 export function pointsToPath(points: Point[], closedPath?: boolean, origin = [0, 0]): string {
 	if (points.length == 0) return ''
