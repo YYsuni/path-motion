@@ -317,11 +317,10 @@ export default function AsideDesign() {
 										onClick={() => {
 											store.uid = item.uid
 											store.name = item.name
-											store.points = jsonToPoints(item.points) || []
 											store.closedPath = item.closedPath
 
+											store.setPoints(jsonToPoints(item.points) || [])
 											const [record] = store.records.splice(i, 1)
-
 											store.setRecords([record, ...store.records])
 										}}
 										className='w-full rounded border bg-gray-50 py-0.5 hover:bg-gray-100 active:bg-gray-200'>
