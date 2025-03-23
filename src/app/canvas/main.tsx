@@ -3,7 +3,7 @@
 import { CanvasMode, MouseMode } from '@/consts'
 import { Point } from '@/lib/point'
 import { isBetween, pointsToPath } from '@/lib/utils'
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Aside from './aside'
 import { debounceSave, getLocalMeta, getLocalPoints, getLocalRecords, getStorage, saveRecords, setStorage } from '@/lib/storage'
 import { motion } from 'motion/react'
@@ -37,6 +37,7 @@ export const store = {
 
 	creatingPoint: null as Point | null,
 	selectStart: null as { x: number; y: number } | null,
+	selectedPoints: null as null | Point[],
 
 	enableCanvas: false,
 	setEnableCanvas: (() => {}) as Dispatch<SetStateAction<boolean>>,
@@ -102,12 +103,16 @@ export default function Main() {
 
 	// Select
 	const [selectedRect, setSelectedRect] = useState<{ x: number; y: number }[] | null>(null)
-	const betterSelectedRect = selectedRect
-		? [
-				{ x: Math.min(selectedRect[0].x, selectedRect[1].x), y: Math.min(selectedRect[0].y, selectedRect[1].y) },
-				{ x: Math.max(selectedRect[0].x, selectedRect[1].x), y: Math.max(selectedRect[0].y, selectedRect[1].y) }
-			]
-		: null
+	const betterSelectedRect = useMemo(
+		() =>
+			selectedRect
+				? [
+						{ x: Math.min(selectedRect[0].x, selectedRect[1].x), y: Math.min(selectedRect[0].y, selectedRect[1].y) },
+						{ x: Math.max(selectedRect[0].x, selectedRect[1].x), y: Math.max(selectedRect[0].y, selectedRect[1].y) }
+					]
+				: null,
+		[selectedRect]
+	)
 
 	const [nameOpen, setNameOpen] = useState(false)
 	const [records, setRecords] = useState<PathRecord[]>([])
@@ -204,6 +209,7 @@ export default function Main() {
 			}
 		}
 		const mouseDownHandleCapture = (e: MouseEvent) => {
+			if (!((e.target as HTMLElement).tagName == 'svg' && (e.target as HTMLElement).id === 'board')) return
 			setSelectedRect(null)
 		}
 
@@ -272,6 +278,15 @@ export default function Main() {
 	}, [records])
 
 	// Actions
+	const selectedPoints = useMemo(() => {
+		if (betterSelectedRect) {
+			const selectedPoints = store.points.filter(
+				item => isBetween(item.x, betterSelectedRect[0].x, betterSelectedRect[1].x) && isBetween(item.y, betterSelectedRect[0].y, betterSelectedRect[1].y)
+			)
+			return selectedPoints
+		}
+	}, [betterSelectedRect])
+	store.selectedPoints = selectedPoints || null
 	const deleteHandle = useCallback(
 		(e: KeyboardEvent) => {
 			if (e.key === 'Delete' || e.code === 'Backspace') {
@@ -353,7 +368,7 @@ export default function Main() {
 						<path ref={pathRef} d={d} stroke='url(#gradient)' id='path' strokeWidth={2.5} strokeLinejoin='round' />
 
 						{points.map(item => (
-							<PointComponent key={item.uid} point={item} canvasMode={canvasMode} betterSelectedRect={betterSelectedRect} />
+							<PointComponent key={item.uid} point={item} canvasMode={canvasMode} />
 						))}
 					</svg>
 				)}

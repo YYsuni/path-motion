@@ -1,3 +1,4 @@
+import { store } from '@/app/canvas/main'
 import { CanvasMode } from '@/consts'
 import { Point } from '@/lib/point'
 import { isBetween } from '@/lib/utils'
@@ -5,26 +6,25 @@ import { dispatchEvent } from '@/lib/window-event'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 
-const store = {
+const movementStore = {
+	x: 0,
+	y: 0,
 	preControlStartOffetX: 0,
 	preControlStartOffetY: 0,
 	postControlStartOffetX: 0,
 	postControlStartOffetY: 0
 }
+let pointsSnapshot: any[] | null = []
 
 interface Props {
 	point: Point
 	canvasMode: CanvasMode
-	betterSelectedRect: { x: number; y: number }[] | null
 }
 
-export default function PointComponent({ point, canvasMode, betterSelectedRect }: Props) {
+export default function PointComponent({ point, canvasMode }: Props) {
 	const [active, setActive] = useState(false)
 	const theActive = active || point.active
-	const seleted =
-		betterSelectedRect &&
-		isBetween(point.x, betterSelectedRect[0].x, betterSelectedRect[1].x) &&
-		isBetween(point.y, betterSelectedRect[0].y, betterSelectedRect[1].y)
+	const seleted = !!store.selectedPoints?.find(item => item.uid === point.uid)
 
 	const animateStyle = useMemo(() => {
 		if (seleted) {
@@ -125,20 +125,47 @@ export default function PointComponent({ point, canvasMode, betterSelectedRect }
 
 			<motion.circle
 				onMouseDown={e => {
-					store.preControlStartOffetX = point.preControlPoint.x - point.x
-					store.preControlStartOffetY = point.preControlPoint.y - point.y
-					store.postControlStartOffetX = point.postControlPoint.x - point.x
-					store.postControlStartOffetY = point.postControlPoint.y - point.y
+					movementStore.x = point.x
+					movementStore.y = point.y
+
+					movementStore.preControlStartOffetX = point.preControlPoint.x - point.x
+					movementStore.preControlStartOffetY = point.preControlPoint.y - point.y
+					movementStore.postControlStartOffetX = point.postControlPoint.x - point.x
+					movementStore.postControlStartOffetY = point.postControlPoint.y - point.y
+
+					pointsSnapshot =
+						store.selectedPoints?.map(item => ({
+							x: item.x,
+							y: item.y,
+							preControlPointX: item.preControlPoint.x,
+							preControlPointY: item.preControlPoint.y,
+							postControlPointX: item.postControlPoint.x,
+							postControlPointY: item.postControlPoint.y
+						})) || null
 				}}
 				onMouseEnter={() => setActive(true)}
 				onMouseOut={() => setActive(false)}
 				onPan={e => {
 					point.x = e.pageX
 					point.y = e.pageY
-					point.preControlPoint.x = store.preControlStartOffetX + point.x
-					point.preControlPoint.y = store.preControlStartOffetY + point.y
-					point.postControlPoint.x = store.postControlStartOffetX + point.x
-					point.postControlPoint.y = store.postControlStartOffetY + point.y
+					point.preControlPoint.x = movementStore.preControlStartOffetX + point.x
+					point.preControlPoint.y = movementStore.preControlStartOffetY + point.y
+					point.postControlPoint.x = movementStore.postControlStartOffetX + point.x
+					point.postControlPoint.y = movementStore.postControlStartOffetY + point.y
+
+					const offsetX = point.x - movementStore.x
+					const offsetY = point.y - movementStore.y
+
+					if (pointsSnapshot)
+						store.selectedPoints?.forEach((item, i) => {
+							item.x = pointsSnapshot![i].x + offsetX
+							item.y = pointsSnapshot![i].y + offsetY
+							item.preControlPoint.x = pointsSnapshot![i].preControlPointX + offsetX
+							item.preControlPoint.y = pointsSnapshot![i].preControlPointY + offsetY
+							item.postControlPoint.x = pointsSnapshot![i].postControlPointX + offsetX
+							item.postControlPoint.y = pointsSnapshot![i].postControlPointY + offsetY
+						})
+
 					point.activate()
 				}}
 				onClick={e => {
