@@ -122,8 +122,9 @@ export function findPerpendicularPoints(current: SimplePoint, prePoint: SimplePo
 	const distanceToPre = distance(current, prePoint)
 	const distanceToPost = distance(current, postPoint)
 
-	const L1 = distanceToPre * coefficient
-	const L2 = distanceToPost * coefficient
+	const maxL = 300
+	const L1 = Math.min(maxL, distanceToPre * coefficient)
+	const L2 = Math.min(maxL, distanceToPost * coefficient)
 
 	const midPoint: SimplePoint = {
 		x: (prePoint.x + postPoint.x) / 2,
@@ -139,15 +140,6 @@ export function findPerpendicularPoints(current: SimplePoint, prePoint: SimplePo
 	const normalizedVector: SimplePoint = {
 		x: perpendicularVector1.x / length,
 		y: perpendicularVector1.y / length
-	}
-
-	const point1: SimplePoint = {
-		x: current.x + normalizedVector.x * L1,
-		y: current.y + normalizedVector.y * L1
-	}
-	const point2: SimplePoint = {
-		x: current.x - normalizedVector.x * L2,
-		y: current.y - normalizedVector.y * L2
 	}
 
 	const vectorToPre: SimplePoint = {
@@ -166,8 +158,26 @@ export function findPerpendicularPoints(current: SimplePoint, prePoint: SimplePo
 	)
 
 	if (angle1 < angle2) {
-		return [point1, point2]
+		return [
+			{
+				x: current.x + normalizedVector.x * L1,
+				y: current.y + normalizedVector.y * L1
+			},
+			{
+				x: current.x - normalizedVector.x * L2,
+				y: current.y - normalizedVector.y * L2
+			}
+		]
 	} else {
-		return [point2, point1]
+		return [
+			{
+				x: current.x - normalizedVector.x * L1,
+				y: current.y - normalizedVector.y * L1
+			},
+			{
+				x: current.x + normalizedVector.x * L2,
+				y: current.y + normalizedVector.y * L2
+			}
+		]
 	}
 }
