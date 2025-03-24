@@ -72,9 +72,15 @@ export default function AsideDesign() {
 					<div
 						onClick={() => {
 							store.points.forEach((item, index) => {
-								if (!(!store.closedPath && (index == 0 || index == store.points.length - 1))) item.enablePreControl = true
 								item.initControlPoints()
-								if (!(!store.closedPath && (index == 0 || index == store.points.length - 1))) item.enablePostControl = true
+								item.enablePreControl = true
+								item.enablePostControl = true
+
+								if (!store.closedPath && (index == 0 || index == store.points.length - 1)) {
+									if (index == 0) item.enablePreControl = false
+									if (index == store.points.length - 1) item.enablePostControl = false
+								}
+
 								item.enableControlWeld = true
 								item.enableControlEqual = false
 								item.preControlPoint.x = fixNumber(item.preControlPoint.x)
