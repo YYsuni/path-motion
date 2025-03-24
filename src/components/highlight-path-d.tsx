@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react'
+import { memo, ReactElement, useEffect, useState } from 'react'
 import { debounce } from 'ts-debounce'
 
 interface Props {
@@ -35,10 +35,14 @@ const handle = (setArr: any, d: string) => {
 
 const debouncedHandle = debounce(handle, 100)
 
-export default function HighlightPathD({ d }: Props) {
+function HighlightPathD({ d }: Props) {
 	const [arr, setArr] = useState<ReactElement[]>(renderD(d))
 
-	debouncedHandle(setArr, d)
+	useEffect(() => {
+		debouncedHandle(setArr, d)
+	}, [d])
 
 	return arr
 }
+
+export default memo(HighlightPathD)
