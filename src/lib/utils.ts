@@ -113,3 +113,61 @@ export function fixNumber(value: string | number, decimals = 2) {
 export function isBetween(num: number, start: number, end: number) {
 	return num >= start && num <= end
 }
+
+type SimplePoint = { x: number; y: number }
+export function distance(p1: SimplePoint, p2: SimplePoint): number {
+	return Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2)
+}
+export function findPerpendicularPoints(current: SimplePoint, prePoint: SimplePoint, postPoint: SimplePoint, coefficient: number): [SimplePoint, SimplePoint] {
+	const distanceToPre = distance(current, prePoint)
+	const distanceToPost = distance(current, postPoint)
+
+	const L1 = distanceToPre * coefficient
+	const L2 = distanceToPost * coefficient
+
+	const midPoint: SimplePoint = {
+		x: (prePoint.x + postPoint.x) / 2,
+		y: (prePoint.y + postPoint.y) / 2
+	}
+
+	const dx = midPoint.x - current.x
+	const dy = midPoint.y - current.y
+
+	const perpendicularVector1: SimplePoint = { x: -dy, y: dx }
+
+	const length = Math.sqrt(perpendicularVector1.x ** 2 + perpendicularVector1.y ** 2)
+	const normalizedVector: SimplePoint = {
+		x: perpendicularVector1.x / length,
+		y: perpendicularVector1.y / length
+	}
+
+	const point1: SimplePoint = {
+		x: current.x + normalizedVector.x * L1,
+		y: current.y + normalizedVector.y * L1
+	}
+	const point2: SimplePoint = {
+		x: current.x - normalizedVector.x * L2,
+		y: current.y - normalizedVector.y * L2
+	}
+
+	const vectorToPre: SimplePoint = {
+		x: prePoint.x - current.x,
+		y: prePoint.y - current.y
+	}
+
+	const angle1 = Math.acos(
+		(vectorToPre.x * normalizedVector.x + vectorToPre.y * normalizedVector.y) /
+			(Math.sqrt(vectorToPre.x ** 2 + vectorToPre.y ** 2) * Math.sqrt(normalizedVector.x ** 2 + normalizedVector.y ** 2))
+	)
+
+	const angle2 = Math.acos(
+		(vectorToPre.x * -normalizedVector.x + vectorToPre.y * -normalizedVector.y) /
+			(Math.sqrt(vectorToPre.x ** 2 + vectorToPre.y ** 2) * Math.sqrt(normalizedVector.x ** 2 + normalizedVector.y ** 2))
+	)
+
+	if (angle1 < angle2) {
+		return [point1, point2]
+	} else {
+		return [point2, point1]
+	}
+}

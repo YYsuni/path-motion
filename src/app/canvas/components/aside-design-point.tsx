@@ -74,12 +74,11 @@ function AsideDesignPoint({ activePoint }: Props) {
 					onClick={() => {
 						if (!activePoint.enablePreControl) {
 							activePoint.enablePreControl = true
-							activePoint.initPreControlPoint()
 						}
 						if (!activePoint.enablePostControl) {
 							activePoint.enablePostControl = true
-							activePoint.initPostControlPoint()
 						}
+						activePoint.initControlPoints()
 						activePoint.enableControlWeld = false
 						activePoint.activate()
 					}}
@@ -93,15 +92,13 @@ function AsideDesignPoint({ activePoint }: Props) {
 					onClick={() => {
 						if (!activePoint.enablePreControl) {
 							activePoint.enablePreControl = true
-							activePoint.initPreControlPoint()
 						}
 						if (!activePoint.enablePostControl) {
 							activePoint.enablePostControl = true
-							activePoint.initPostControlPoint()
 						}
+						activePoint.initControlPoints()
 						activePoint.enableControlWeld = true
 						activePoint.enableControlEqual = false
-						activePoint.syncPostControlPoint()
 						activePoint.activate()
 					}}
 					className={clsx(
@@ -114,15 +111,13 @@ function AsideDesignPoint({ activePoint }: Props) {
 					onClick={() => {
 						if (!activePoint.enablePreControl) {
 							activePoint.enablePreControl = true
-							activePoint.initPreControlPoint()
 						}
 						if (!activePoint.enablePostControl) {
 							activePoint.enablePostControl = true
-							activePoint.initPostControlPoint()
 						}
+						activePoint.initControlPoints()
 						activePoint.enableControlWeld = true
 						activePoint.enableControlEqual = true
-						activePoint.syncPostControlPoint()
 						activePoint.activate()
 					}}
 					className={clsx(

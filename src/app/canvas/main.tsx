@@ -231,7 +231,7 @@ export default function Main() {
 					creatingPoint.enablePostControl = true
 					creatingPoint.enableControlWeld = true
 					creatingPoint.enableControlEqual = true
-					creatingPoint.initPreControlPoint()
+					creatingPoint.initControlPoints()
 				}
 
 				creatingPoint.postControlPoint.x = e.x

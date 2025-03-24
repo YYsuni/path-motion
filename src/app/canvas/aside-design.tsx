@@ -73,11 +73,10 @@ export default function AsideDesign() {
 						onClick={() => {
 							store.points.forEach((item, index) => {
 								if (!(!store.closedPath && (index == 0 || index == store.points.length - 1))) item.enablePreControl = true
-								item.initPreControlPoint()
+								item.initControlPoints()
 								if (!(!store.closedPath && (index == 0 || index == store.points.length - 1))) item.enablePostControl = true
 								item.enableControlWeld = true
-								item.enableControlEqual = true
-								item.syncPostControlPoint()
+								item.enableControlEqual = false
 								item.preControlPoint.x = fixNumber(item.preControlPoint.x)
 								item.preControlPoint.y = fixNumber(item.preControlPoint.y)
 								item.postControlPoint.x = fixNumber(item.postControlPoint.x)

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import { uid } from 'uid'
-import { pointsToPath } from './utils'
+import { findPerpendicularPoints, pointsToPath } from './utils'
 import { getPointAtLength, getTotalLength } from 'svg-path-commander'
 import { store } from '@/app/canvas/main'
 
@@ -58,57 +58,33 @@ export class Point {
 		if (index < store.points.length - 1) return store.points[index + 1]
 		else return store.points[0]
 	}
+	initControlPoints() {
+		const prePoint = this.getPrePoint()
+		const postPoint = this.getPostPoint()
+		const [point1, point2] = findPerpendicularPoints(this, prePoint, postPoint, 0.5)
+
+		this.preControlPoint.x = point1.x
+		this.preControlPoint.y = point1.y
+		this.postControlPoint.x = point2.x
+		this.postControlPoint.y = point2.y
+	}
 	initPreControlPoint() {
 		const prePoint = this.getPrePoint()
 		const postPoint = this.getPostPoint()
-		let xDiff = 0
-		let yDiff = 0
+		const [point1, point2] = findPerpendicularPoints(this, prePoint, postPoint, 0.5)
 
-		if (this.points.length >= 3) {
-			const postPoint = this.getPostPoint()
-			xDiff = prePoint.x - postPoint.x
-			yDiff = prePoint.y - postPoint.y
-		} else if (prePoint) {
-			xDiff = prePoint.x - this.x
-			yDiff = prePoint.y - this.y
-		}
-
-		const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
-
-		if (!distance) return
-
-		const preLength = Math.sqrt((this.x - prePoint.x) ** 2 + (this.y - prePoint.y) ** 2)
-		const postLength = Math.sqrt((this.x - postPoint.x) ** 2 + (this.y - postPoint.y) ** 2)
-		const controlLength = Math.min(preLength / 3, postLength / 3)
-		const ratio = controlLength / distance
-
-		this.preControlPoint.x = xDiff * ratio + this.x
-		this.preControlPoint.y = yDiff * ratio + this.y
+		this.preControlPoint.x = point1.x
+		this.preControlPoint.y = point1.y
+		this.preControlPoint.x = point1.x
+		this.preControlPoint.y = point1.y
 	}
 	initPostControlPoint() {
-		const postPoint = this.getPostPoint()
 		const prePoint = this.getPrePoint()
-		let xDiff = 0
-		let yDiff = 0
+		const postPoint = this.getPostPoint()
+		const [point1, point2] = findPerpendicularPoints(this, prePoint, postPoint, 0.5)
 
-		if (this.points.length >= 3) {
-			xDiff = postPoint.x - postPoint.x
-			yDiff = postPoint.y - postPoint.y
-		} else if (postPoint) {
-			xDiff = postPoint.x - this.x
-			yDiff = postPoint.y - this.y
-		}
-
-		const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff)
-		if (!distance) return
-
-		const preLength = Math.sqrt((this.x - prePoint.x) ** 2 + (this.y - prePoint.y) ** 2)
-		const postLength = Math.sqrt((this.x - postPoint.x) ** 2 + (this.y - postPoint.y) ** 2)
-		const controlLength = Math.min(preLength / 3, postLength / 3)
-		const ratio = controlLength / distance
-
-		this.postControlPoint.x = xDiff * ratio + this.x
-		this.postControlPoint.y = yDiff * ratio + this.y
+		this.postControlPoint.x = point2.x
+		this.postControlPoint.y = point2.y
 	}
 	getPreControlLength() {
 		const xDiff = this.preControlPoint.x - this.x
