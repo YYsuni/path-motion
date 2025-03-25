@@ -24,7 +24,8 @@
 		"tailwind-merge": "^3.0.2",
 		"ts-debounce": "^4.0.0",
 		"uid": "^2.0.2",
-		"uuid": "^11.1.0"
+		"uuid": "^11.1.0",
+		"zustand": "^5.0.3"
 	},
 	"devDependencies": {
 		"@types/node": "^22.13.10",

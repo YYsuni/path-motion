@@ -11,6 +11,7 @@ import PointComponent from '@/components/point'
 import Toolbar from './toolbar'
 import { v4 as uuidv4 } from 'uuid'
 import NameDialog from './name-dialog'
+import References from './references'
 
 export const store = {
 	uid: '',
@@ -367,9 +368,13 @@ export default function Main() {
 
 						<path ref={pathRef} d={d} stroke='url(#gradient)' id='path' strokeWidth={2.5} strokeLinejoin='round' />
 
-						{points.map(item => (
-							<PointComponent key={item.uid} point={item} canvasMode={canvasMode} />
-						))}
+						<g>
+							{points.map(item => (
+								<PointComponent key={item.uid} point={item} canvasMode={canvasMode} />
+							))}
+						</g>
+
+						<References />
 					</svg>
 				)}
 
