@@ -1,5 +1,6 @@
 import { Dispatch, memo } from 'react'
 import { create } from 'zustand'
+import Reference from './reference'
 
 export const useReferStore = create<{
 	refers: any[]
@@ -20,13 +21,9 @@ function References() {
 
 	return (
 		<>
-			{refers.map(item => {
-				if (item.type === 'rect') {
-					return <rect key={item.uid} width={item.width} height={item.height} stroke='black' />
-				}
-
-				return null
-			})}
+			{refers.map(item => (
+				<Reference shape={item} key={item.uid} />
+			))}
 		</>
 	)
 }

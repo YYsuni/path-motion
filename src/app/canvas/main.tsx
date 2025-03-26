@@ -11,7 +11,7 @@ import PointComponent from '@/components/point'
 import Toolbar from './toolbar'
 import { v4 as uuidv4 } from 'uuid'
 import NameDialog from './name-dialog'
-import References from './references'
+import References from './components/references'
 
 export const store = {
 	uid: '',
@@ -325,6 +325,8 @@ export default function Main() {
 						animate={{ width: canvasWidth, height: canvasHeight }}></motion.div>
 				)}
 
+				<References />
+
 				{init && (
 					<svg
 						id='board'
@@ -373,8 +375,6 @@ export default function Main() {
 								<PointComponent key={item.uid} point={item} canvasMode={canvasMode} />
 							))}
 						</g>
-
-						<References />
 					</svg>
 				)}
 

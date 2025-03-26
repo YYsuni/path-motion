@@ -1,5 +1,5 @@
 import Checkbox from '@/components/checkbox'
-import { useReferStore } from '../references'
+import { useReferStore } from './references'
 import { v4 as uuidv4 } from 'uuid'
 import { memo } from 'react'
 
@@ -18,7 +18,9 @@ function AsideSettingReference() {
 			</div>
 			{enable && (
 				<div className='mt-3 flex gap-1 px-3'>
-					<button onClick={() => setRefers([...refers, { uid: uuidv4(), type: 'rect', width: 200, height: 200 }])} className='rounded border bg-white p-2'>
+					<button
+						onClick={() => setRefers([...refers, { uid: uuidv4(), type: 'rect', width: 200, height: 200, x: 0, y: 0 }])}
+						className='rounded border bg-white p-2'>
 						<div className='h-5 w-5 border-2 border-secondary'></div>
 					</button>
 				</div>
