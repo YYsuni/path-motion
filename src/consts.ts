@@ -9,3 +9,12 @@ export const canvasModes: CanvasMode[] = ['normal', 'point', 'refine']
 
 export type MouseMode = 'create' | 'select'
 export const mouseModes: MouseMode[] = ['create', 'select']
+
+export type Shape = {
+	uid: string
+	type: 'rect' | 'circle' | 'image'
+	width: number
+	height: number
+	x: number
+	y: number
+}

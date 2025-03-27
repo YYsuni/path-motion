@@ -12,10 +12,14 @@ import Toolbar from './toolbar'
 import { v4 as uuidv4 } from 'uuid'
 import NameDialog from './name-dialog'
 import References from './components/references'
+import clsx from 'clsx'
 
 export const store = {
 	uid: '',
 	name: '',
+
+	tab: 'design' as 'design' | 'setting',
+	setTab: (() => {}) as Dispatch<SetStateAction<'design' | 'setting'>>,
 
 	points: [] as Point[],
 	setPoints: (() => {}) as Dispatch<SetStateAction<Point[]>>,
@@ -61,6 +65,8 @@ export default function Main() {
 	const [init, setInit] = useState(false)
 	const mainRef = useRef<HTMLElement>(null)
 	const [[mainWidth, mainHeight], setMainSize] = useState([0, 0])
+
+	const [tab, setTab] = useState<'design' | 'setting'>('design')
 
 	const [enableCanvas, setEnableCanvas] = useState(false)
 	const [[canvasWidth, canvasHeight], setCanvasSize] = useState([900, 600])
@@ -120,6 +126,8 @@ export default function Main() {
 
 	// Store values
 	{
+		store.tab = tab
+		store.setTab = setTab
 		store.enableCanvas = enableCanvas
 		store.setEnableCanvas = setEnableCanvas
 		store.canvasWidth = canvasWidth
@@ -325,14 +333,16 @@ export default function Main() {
 						animate={{ width: canvasWidth, height: canvasHeight }}></motion.div>
 				)}
 
-				<References />
+				<div className={clsx(tab == 'design' && 'pointer-events-none opacity-60')}>
+					<References />
+				</div>
 
 				{init && (
 					<svg
 						id='board'
 						viewBox={`0 0 ${mainWidth} ${mainHeight}`}
 						fill='none'
-						className='relative h-full w-full select-none'
+						className={clsx('relative h-full w-full select-none', tab == 'setting' && 'pointer-events-none opacity-40')}
 						xmlns='http://www.w3.org/2000/svg'>
 						<defs>
 							<radialGradient id='gradient' cx='0%' cy='0%' r='100%' gradientUnits='userSpaceOnUse'>
