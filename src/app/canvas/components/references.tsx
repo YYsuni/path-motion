@@ -21,7 +21,11 @@ export const useReferStore = create<{
 let active = false
 let _refers: any[] = []
 
-function References() {
+interface Props {
+	tab: string
+}
+
+function References({ tab }: Props) {
 	const { refers, setRefers, enable, setEnable } = useReferStore()
 	_refers = refers
 
@@ -33,7 +37,16 @@ function References() {
 	}, [refers, enable])
 
 	useEffect(() => {
-		setRefers(JSON.parse(getStorage('refers')!))
+		const refersStr = getStorage('refers')!
+		let refers: any
+		try {
+			refers = JSON.parse(refersStr)
+		} catch (e) {}
+		if (Array.isArray(refers)) {
+			refers.forEach(item => (item.active = false))
+			setRefers(refers)
+		}
+
 		setEnable(getStorage('refer-enable')! === 'true')
 		active = true
 

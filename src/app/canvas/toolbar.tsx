@@ -49,7 +49,7 @@ export default function Toolbar() {
 					)}>
 					{store.name ? <FileSaveSVG className='h-5 w-5 shrink-0' /> : <FileSVG className='h-5 w-5' />}
 
-					<span className='overflow-hidden text-ellipsis'>{store.name || 'Untitled'}</span>
+					<span className='overflow-hidden text-ellipsis whitespace-nowrap'>{store.name || 'Untitled'}</span>
 				</div>
 
 				<button

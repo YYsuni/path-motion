@@ -334,7 +334,7 @@ export default function Main() {
 				)}
 
 				<div className={clsx(tab == 'design' && 'pointer-events-none opacity-60')}>
-					<References />
+					<References tab={tab} />
 				</div>
 
 				{init && (

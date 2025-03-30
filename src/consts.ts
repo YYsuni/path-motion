@@ -17,4 +17,5 @@ export type Shape = {
 	height: number
 	x: number
 	y: number
+	active?: boolean
 }
