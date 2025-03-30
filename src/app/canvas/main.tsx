@@ -3,7 +3,7 @@
 import { CanvasMode, MouseMode } from '@/consts'
 import { Point } from '@/lib/point'
 import { isBetween, pointsToPath } from '@/lib/utils'
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { act, Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Aside from './aside'
 import { debounceSave, getLocalMeta, getLocalPoints, getLocalRecords, getStorage, saveRecords, setStorage } from '@/lib/storage'
 import { motion } from 'motion/react'
@@ -56,9 +56,11 @@ export const store = {
 	setRecords: (() => {}) as Dispatch<SetStateAction<PathRecord[]>>
 }
 
+let active = false
+
 const ORIGIN_RADIUS = 10000
-const ORIGIN_WIDTH = 1
-const ORIGIN_COLOR = '#9996'
+const ORIGIN_WIDTH = 1.5
+const ORIGIN_COLOR = '#9999'
 let originTimer: NodeJS.Timeout | undefined
 
 export default function Main() {
@@ -80,6 +82,8 @@ export default function Main() {
 	const [origin, setOrigin] = useState([0, 0])
 	const [showOrigin, setShowOrigin] = useState(false)
 	useEffect(() => {
+		if (!active) return
+
 		setShowOrigin(true)
 
 		clearTimeout(originTimer)
@@ -157,6 +161,7 @@ export default function Main() {
 
 	useEffect(() => {
 		setInit(true)
+		active = true
 
 		store.uid = uuidv4()
 
@@ -342,7 +347,7 @@ export default function Main() {
 						id='board'
 						viewBox={`0 0 ${mainWidth} ${mainHeight}`}
 						fill='none'
-						className={clsx('relative h-full w-full select-none', tab == 'setting' && 'pointer-events-none opacity-40')}
+						className={clsx('relative h-full w-full select-none', tab == 'setting' && 'pointer-events-none')}
 						xmlns='http://www.w3.org/2000/svg'>
 						<defs>
 							<radialGradient id='gradient' cx='0%' cy='0%' r='100%' gradientUnits='userSpaceOnUse'>
@@ -352,38 +357,38 @@ export default function Main() {
 							</radialGradient>
 						</defs>
 
-						{showOrigin && (
-							<>
-								<motion.rect
-									animate={{
-										x: origin[0] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2,
-										y: origin[1] - ORIGIN_WIDTH / 2
-									}}
-									transition={{ ease: 'linear' }}
-									width={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
-									height={ORIGIN_WIDTH}
-									fill={ORIGIN_COLOR}
-								/>
-								<motion.rect
-									animate={{ x: origin[0] - ORIGIN_WIDTH / 2, y: origin[1] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2 }}
-									transition={{ ease: 'linear' }}
-									width={ORIGIN_WIDTH}
-									height={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
-									fill={ORIGIN_COLOR}
-								/>
-							</>
-						)}
+						<g className={clsx('pointer-events-none', showOrigin ? 'opacity-100' : 'opacity-0')}>
+							<motion.rect
+								animate={{
+									x: origin[0] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2,
+									y: origin[1] - ORIGIN_WIDTH / 2
+								}}
+								transition={{ ease: 'linear' }}
+								width={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
+								height={ORIGIN_WIDTH}
+								fill={ORIGIN_COLOR}
+							/>
+							<motion.rect
+								animate={{ x: origin[0] - ORIGIN_WIDTH / 2, y: origin[1] - ORIGIN_RADIUS - ORIGIN_WIDTH / 2 }}
+								transition={{ ease: 'linear' }}
+								width={ORIGIN_WIDTH}
+								height={ORIGIN_RADIUS * 2 + ORIGIN_WIDTH}
+								fill={ORIGIN_COLOR}
+							/>
+						</g>
 
-						<text x={origin[0] + 5} y={origin[1] - 5} className='text-black/40' fill='currentColor' fontSize={10}>
-							(0, 0)
-						</text>
+						<g className={clsx(tab == 'setting' && 'opacity-40')}>
+							<text x={origin[0] + 5} y={origin[1] - 5} className='text-black/40' fill='currentColor' fontSize={10}>
+								(0, 0)
+							</text>
 
-						<path ref={pathRef} d={d} stroke='url(#gradient)' id='path' strokeWidth={2.5} strokeLinejoin='round' />
+							<path ref={pathRef} d={d} stroke='url(#gradient)' id='path' strokeWidth={2.5} strokeLinejoin='round' />
 
-						<g>
-							{points.map(item => (
-								<PointComponent key={item.uid} point={item} canvasMode={canvasMode} />
-							))}
+							<g>
+								{points.map(item => (
+									<PointComponent key={item.uid} point={item} canvasMode={canvasMode} />
+								))}
+							</g>
 						</g>
 					</svg>
 				)}
