@@ -37,7 +37,7 @@ export default function NameDialog() {
 		<motion.div
 			initial={{ backgroundColor: 'rgb(0 0 0 / 0)' }}
 			animate={{ backgroundColor: 'rgb(0 0 0 / 0.6)' }}
-			className='fixed inset-0 flex items-center justify-center bg-black/80'>
+			className='fixed inset-0 z-[100] flex items-center justify-center bg-black/80'>
 			<motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className='w-[320px] rounded-lg bg-white p-4'>
 				Name
 				<input

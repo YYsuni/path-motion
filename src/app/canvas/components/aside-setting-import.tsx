@@ -21,7 +21,7 @@ function AsideSettingImport() {
 				<div className='mt-3 px-3'>
 					<textarea
 						ref={textareaRef}
-						className='f w-full resize-none break-all rounded-md bg-gray-200 p-2 text-xs font-normal focus:outline-none'
+						className='w-full resize-none break-all rounded-md bg-gray-200 p-2 text-xs font-normal focus:outline-none'
 						rows={5}
 						placeholder='M942.29,455.86 C942.29,455.86 985.71,310.14 1095.43,392.43'
 					/>

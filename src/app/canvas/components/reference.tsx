@@ -61,7 +61,7 @@ export default function Reference({ shape }: Props) {
 		}
 	}, [])
 
-	if (shape.type === 'rect' || shape.type === 'circle') {
+	if (shape.type === 'rect' || shape.type === 'circle' || shape.type === 'image') {
 		return (
 			<div
 				onMouseDown={e => {
@@ -78,10 +78,10 @@ export default function Reference({ shape }: Props) {
 				{store.tab === 'setting' && data.active && (
 					<div
 						className={clsx(
-							'pointer-events-none select-none p-1 text-xs text-black/40',
+							'pointer-events-none z-10 select-none p-1 text-xs text-black/40',
 							shape.type === 'circle' && 'flex h-full w-full items-center justify-center'
 						)}>
-						({data.width}, {data.height})
+						{data.width}x{data.height}
 					</div>
 				)}
 				{store.tab == 'setting' && data.active && (
@@ -98,6 +98,8 @@ export default function Reference({ shape }: Props) {
 						className='absolute -bottom-2 -right-2 h-4 w-4 cursor-nwse-resize border-b-2 border-r-2 border-brand'
 					/>
 				)}
+
+				{data.type === 'image' && data.src && <img src={data.src} className='absolute inset-0 h-full w-full select-none object-cover' draggable={false} />}
 			</div>
 		)
 	}

@@ -13,6 +13,7 @@ export const mouseModes: MouseMode[] = ['create', 'select']
 export type Shape = {
 	uid: string
 	type: 'rect' | 'circle' | 'image'
+	src?: string
 	width: number
 	height: number
 	x: number
