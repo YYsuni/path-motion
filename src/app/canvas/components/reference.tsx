@@ -99,7 +99,7 @@ export default function Reference({ shape }: Props) {
 					/>
 				)}
 
-				{data.type === 'image' && data.src && <img src={data.src} className='absolute inset-0 h-full w-full select-none object-cover' draggable={false} />}
+				{data.type === 'image' && data.src && <img src={data.src} className='pointer-events-none absolute inset-0 h-full w-full object-cover' />}
 			</div>
 		)
 	}
