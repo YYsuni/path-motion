@@ -13,9 +13,10 @@ import { memo } from 'react'
 
 interface Props {
 	activePoint: Point
+	points: Point[]
 }
 
-function AsideDesignPoint({ activePoint }: Props) {
+function AsideDesignPoint({ activePoint, points }: Props) {
 	return (
 		<section>
 			<h3 className='px-3 text-sm'>
@@ -43,7 +44,7 @@ function AsideDesignPoint({ activePoint }: Props) {
 					onClick={() => {
 						if (!activePoint.enablePreControl) {
 							activePoint.enablePreControl = true
-							activePoint.initPreControlPoint()
+							if (!activePoint.preControlPoint.x && !activePoint.preControlPoint.y) activePoint.initPreControlPoint()
 						}
 						activePoint.enablePostControl = false
 						activePoint.activate()
@@ -59,7 +60,7 @@ function AsideDesignPoint({ activePoint }: Props) {
 						activePoint.enablePreControl = false
 						if (!activePoint.enablePostControl) {
 							activePoint.enablePostControl = true
-							activePoint.initPostControlPoint()
+							if (!activePoint.postControlPoint.x && !activePoint.postControlPoint.y) activePoint.initPostControlPoint()
 						}
 						activePoint.enableControlWeld = false
 						activePoint.activate()
@@ -78,7 +79,8 @@ function AsideDesignPoint({ activePoint }: Props) {
 						if (!activePoint.enablePostControl) {
 							activePoint.enablePostControl = true
 						}
-						activePoint.initControlPoints()
+						if (!activePoint.preControlPoint.x && !activePoint.preControlPoint.y) activePoint.initPreControlPoint()
+						if (!activePoint.postControlPoint.x && !activePoint.postControlPoint.y) activePoint.syncPostControlPoint()
 						activePoint.enableControlWeld = false
 						activePoint.activate()
 					}}
@@ -96,7 +98,8 @@ function AsideDesignPoint({ activePoint }: Props) {
 						if (!activePoint.enablePostControl) {
 							activePoint.enablePostControl = true
 						}
-						activePoint.initControlPoints()
+						if (!activePoint.preControlPoint.x && !activePoint.preControlPoint.y) activePoint.initPreControlPoint()
+						if (!activePoint.postControlPoint.x && !activePoint.postControlPoint.y) activePoint.syncPostControlPoint()
 						activePoint.enableControlWeld = true
 						activePoint.enableControlEqual = false
 						activePoint.activate()
@@ -115,7 +118,8 @@ function AsideDesignPoint({ activePoint }: Props) {
 						if (!activePoint.enablePostControl) {
 							activePoint.enablePostControl = true
 						}
-						activePoint.initControlPoints()
+						if (!activePoint.preControlPoint.x && !activePoint.preControlPoint.y) activePoint.initPreControlPoint()
+						if (!activePoint.postControlPoint.x && !activePoint.postControlPoint.y) activePoint.syncPostControlPoint()
 						activePoint.enableControlWeld = true
 						activePoint.enableControlEqual = true
 						activePoint.activate()

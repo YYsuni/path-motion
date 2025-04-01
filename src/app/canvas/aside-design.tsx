@@ -20,7 +20,7 @@ export default function AsideDesign() {
 
 	return (
 		<>
-			{activePoint && <AsideDesignPoint activePoint={activePoint} />}
+			{activePoint && <AsideDesignPoint activePoint={activePoint} points={store.points} />}
 
 			<section>
 				<h3 className='px-3 text-sm'>Path</h3>
