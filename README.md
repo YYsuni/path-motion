@@ -2,6 +2,8 @@
 
 https://path-motion.yysuni.com/
 
+> Welcome to use and give feedback.
+
 ![Path Motion](cover.png 'Path Motion')
 
 ### Features
