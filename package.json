@@ -1,41 +1,41 @@
 {
-	"name": "path-motion",
-	"version": "0.1.0",
-	"private": true,
-	"scripts": {
-		"dev": "next dev --turbopack -p 4565",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint"
-	},
-	"dependencies": {
-		"@radix-ui/react-checkbox": "^1.1.4",
-		"@svgr/webpack": "^8.1.0",
-		"clsx": "^2.1.1",
-		"dayjs": "^1.11.13",
-		"decimal.js": "^10.5.0",
-		"lucide-react": "^0.483.0",
-		"motion": "^12.5.0",
-		"next": "15.2.2",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
-		"react18-json-view": "^0.2.9",
-		"svg-path-commander": "^2.1.10",
-		"tailwind-merge": "^3.0.2",
-		"ts-debounce": "^4.0.0",
-		"uid": "^2.0.2",
-		"uuid": "^11.1.0",
-		"zustand": "^5.0.3"
-	},
-	"devDependencies": {
-		"@types/node": "^22.13.10",
-		"@types/react": "^19.0.10",
-		"@types/react-dom": "^19.0.4",
-		"postcss": "^8.5.3",
-		"prettier": "^3.5.3",
-		"prettier-plugin-tailwindcss": "^0.6.11",
-		"sass": "^1.85.1",
-		"tailwindcss": "^3.4.1",
-		"typescript": "^5.8.2"
-	}
+  "name": "path-motion",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack -p 4565",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@radix-ui/react-checkbox": "^1.1.4",
+    "@svgr/webpack": "^8.1.0",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
+    "decimal.js": "^10.5.0",
+    "lucide-react": "^0.483.0",
+    "motion": "^12.5.0",
+    "next": "15.2.8",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react18-json-view": "^0.2.9",
+    "svg-path-commander": "^2.1.10",
+    "tailwind-merge": "^3.0.2",
+    "ts-debounce": "^4.0.0",
+    "uid": "^2.0.2",
+    "uuid": "^11.1.0",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "postcss": "^8.5.3",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "sass": "^1.85.1",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.8.2"
+  }
 }
